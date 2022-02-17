@@ -102,9 +102,6 @@ function RegisterDoctor() {
       specializations,
       qualifications,
       workplaces,
-      image: profilePic,
-      // licenseFront,
-      // licenseBack,
     };
 
     if (
@@ -124,7 +121,17 @@ function RegisterDoctor() {
     ) {
       setValueMissing(false);
 
-      dispatch(register("doctor", values));
+      const formData = new FormData();
+
+      Object.keys(values).forEach((item) => {
+        formData.append([item], values[item]);
+      });
+
+      formData.append("image", profilePic);
+      formData.append("image", licenseFront);
+      formData.append("image", licenseBack);
+
+      dispatch(register("doctor", formData));
     } else {
       setValueMissing(true);
     }

@@ -98,7 +98,13 @@ function RegisterUser() {
     ) {
       setValueMissing(false);
 
-      dispatch(register("user", values));
+      const formData = new FormData();
+
+      Object.keys(values).forEach((item) => {
+        formData.append([item], values[item]);
+      });
+
+      dispatch(register("user", formData));
     } else {
       setValueMissing(true);
     }
