@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const HttpError = require('../models/http-error');
 const Patient = require('../models/patient');
 const Doctor = require('../models/doctor');
+const Appointment = require('../models/appointment');
 
 
 const signup = async (req, res, next) => {
@@ -357,6 +358,23 @@ const changePassword = async (req, res, next) => {
     }
     res.status(200).json({ patient: updatedPatient.toObject({ getters: true }) });
 };
+
+exports.getAllAppointments = async (req, res, next)=>{
+    let patient;
+    try {
+        patient = await Patient.findById(req.userData.id).populate('appointments');
+    } catch (error) {
+        next(new HttpError("Something went wrong, could not get appointments.", 500));
+    }
+    const detailedAppointmentStat = await patient.appointments.map(appointment => {
+        appointment.toObject({getters: true})});
+    res.status(200).json({ 
+        data:{
+            patient: patient.toObject({ getters: true }),
+            detailedAppointmentStat
+        } 
+    });
+}
 
 const getDoctors = async (req, res, next) => {
     const { doctorName, speciality } = req.body;

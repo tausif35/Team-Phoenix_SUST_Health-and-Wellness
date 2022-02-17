@@ -7,7 +7,7 @@ module.exports = (req, res, next) => {
     }
     try {
         const token = req.headers.authorization.split(' ')[1]; // Authorization: Bearer <token>
-        const decodedToken = jwt.verify(token, 'phoenix');
+        const decodedToken = jwt.verify(token, process.env.JWT_KEY);
         req.userData = { id: decodedToken.id, email: decodedToken.email, type: decodedToken.type };
         next();
     } catch (error) {

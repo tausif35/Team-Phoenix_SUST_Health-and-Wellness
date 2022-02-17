@@ -20,4 +20,7 @@ router.patch('/:doctorId', doctorControllers.editInfo);
 
 router.put('/:doctorId', doctorControllers.changePassword);
 
+router.get('/appointments', doctorControllers.getAllAppointments);
+router.get('/:id', doctorControllers.getAllAppointments);
+
 module.exports = router;
