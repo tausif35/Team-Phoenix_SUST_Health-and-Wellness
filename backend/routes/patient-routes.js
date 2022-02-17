@@ -19,6 +19,9 @@ router.patch('/:patientId', patientControllers.editInfo);
 
 router.put('/:patientId', patientControllers.changePassword);
 
-router.get('/doctors', patientControllers.getDoctors);
+// get doctors by specializations or name or both
+router.get('/findDoctors', patientControllers.getDoctors); 
+
+router.get('/findDoctors/:doctorId', patientControllers.getDoctor);
 
 module.exports = router;
