@@ -1,6 +1,9 @@
 import { applyMiddleware, combineReducers, createStore } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import thunk from "redux-thunk";
+
+import { doctorListReducer } from "./reducers/appointmentReducer";
+
 import { socketConnectionReducer } from "./reducers/socketReducer";
 import {
   userDetailsReducer,
@@ -16,6 +19,9 @@ const reducer = combineReducers({
   userDetails: userDetailsReducer,
   userProfileUpdate: userProfileUpdateReducer,
   userPasswordUpdate: userPasswordUpdateReducer,
+
+  doctorList: doctorListReducer,
+
   socketConnection: socketConnectionReducer,
 });
 
