@@ -24,3 +24,5 @@ export const GET_USER_PROFILE = `${API_HOST}/api/users/profile`;
 //@desc Update user profile (patch) info or password (put)
 //@format API_HOST/api/users/profile
 export const UPDATE_USER_PROFILE = `${API_HOST}/api/users/profile`;
+
+export const GET_DOCTOR_LIST = `${API_HOST}/api/patients/findDoctors`;

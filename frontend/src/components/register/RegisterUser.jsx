@@ -22,14 +22,13 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { register } from "../../actions/userActions";
+import { genders } from "../../utils/categoryList";
 
 const StyledLink = styled(Link)`
   :hover {
     text-decoration: underline;
   }
 `;
-
-const genders = ["Male", "Female", "Other"];
 
 function RegisterUser() {
   const dispatch = useDispatch();

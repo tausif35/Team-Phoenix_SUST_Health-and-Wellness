@@ -1,27 +1,40 @@
 import { SearchOutlined } from "@mui/icons-material";
 import {
+  Alert,
   Autocomplete,
   Button,
+  Grid,
+  LinearProgress,
   Paper,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
-
-const specializationList = ["A", "B", "C"];
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { doctorList } from "../../actions/appointmentActions";
+import { specializationList } from "../../utils/categoryList";
+import DoctorItem from "./DoctorItem";
 
 function FindDoctor() {
+  const dispatch = useDispatch();
+
   const [doctorName, setDoctorName] = useState("");
-  const [specialty, setSpecialty] = useState("");
+  const [speciality, setSpeciality] = useState("");
+
+  const { loading, error, doctors } = useSelector((state) => state.doctorList);
+
+  useEffect(() => {
+    dispatch(doctorList(doctorName, speciality));
+  }, []);
 
   const handleSearchClick = () => {
-    console.log(doctorName, specialty);
+    dispatch(doctorList(doctorName, speciality));
   };
 
   return (
-    <Stack spacing={4} alignItems="center" px={4}>
-      <Paper sx={{ width: "100%", maxWidth: "1000px" }}>
+    <Stack spacing={4} px={4}>
+      <Paper sx={{ width: "100%", maxWidth: "1000px", alignSelf: "center" }}>
         <Stack
           direction={{ xs: "column", md: "row" }}
           spacing={2}
@@ -44,7 +57,7 @@ function FindDoctor() {
             fullWidth
             options={specializationList}
             getOptionLabel={(option) => option}
-            onChange={(e, values) => setSpecialty(values)}
+            onChange={(e, values) => setSpeciality(values)}
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -60,6 +73,18 @@ function FindDoctor() {
           </Button>
         </Stack>
       </Paper>
+
+      {loading && <LinearProgress />}
+
+      {error && <Alert severity="error">{error}</Alert>}
+
+      <Grid container spacing={2} columns={{ xs: 1, sm: 3, md: 4, lg: 5 }}>
+        {doctors.map((item, index) => (
+          <Grid item xs={1} key={index}>
+            <DoctorItem item={item} onItemClick={(id) => console.log(id)} />
+          </Grid>
+        ))}
+      </Grid>
     </Stack>
   );
 }

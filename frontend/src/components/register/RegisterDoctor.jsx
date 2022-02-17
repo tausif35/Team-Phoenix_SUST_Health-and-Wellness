@@ -21,15 +21,13 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { register } from "../../actions/userActions";
+import { genders, specializationList } from "../../utils/categoryList";
 
 const StyledLink = styled(Link)`
   :hover {
     text-decoration: underline;
   }
 `;
-
-const genders = ["Male", "Female", "Other"];
-const specializationList = ["A", "B", "C"];
 
 function RegisterDoctor() {
   const dispatch = useDispatch();
@@ -99,9 +97,6 @@ function RegisterDoctor() {
       phoneNo: phone,
       password,
       medicalId,
-      specializations,
-      qualifications,
-      workplaces,
     };
 
     if (
@@ -130,6 +125,9 @@ function RegisterDoctor() {
       formData.append("image", profilePic);
       formData.append("image", licenseFront);
       formData.append("image", licenseBack);
+      formData.append("specializations", JSON.stringify(specializations));
+      formData.append("qualifications", JSON.stringify(qualifications));
+      formData.append("workplaces", JSON.stringify(qualifications));
 
       dispatch(register("doctor", formData));
     } else {
