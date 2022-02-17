@@ -14,10 +14,9 @@ const questionSchema = new mongoose.Schema(
       type: String,
       required: true
     },
-    _userId: {
+    _askerId: {
       type: mongoose.Schema.ObjectId,
-      ref: "Question Asker",
-      required: [true, "A question must have an user"],
+      ref: "Patient",
     },
 
     askedBy: {

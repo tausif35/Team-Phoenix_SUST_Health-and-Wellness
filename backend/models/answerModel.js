@@ -12,7 +12,7 @@ const answerSchema = new mongoose.Schema({
   answeredBy: {
     type: String,
   },
-  upvotes: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
+  upvotes: [{ type: mongoose.Schema.ObjectId, ref: "Patient" }],
 });
 
 const Answer = mongoose.model("Answer", answerSchema);
