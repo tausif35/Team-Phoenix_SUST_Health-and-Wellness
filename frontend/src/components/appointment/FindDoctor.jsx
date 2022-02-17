@@ -1,4 +1,3 @@
-
 import { SearchOutlined } from "@mui/icons-material";
 import {
   Autocomplete,
@@ -59,7 +58,6 @@ function FindDoctor() {
             Search
             <SearchOutlined sx={{ ml: 2 }} />
           </Button>
-
         </Stack>
       </Paper>
     </Stack>
