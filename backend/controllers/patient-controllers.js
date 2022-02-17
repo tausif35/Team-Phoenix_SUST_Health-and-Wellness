@@ -17,7 +17,7 @@ const signup = async (req, res, next) => {
             )
         );
     }
-    // console.log(req.files.path);
+    // console.log(req.files[0].path);
     const {
         name,
         dateOfBirth,
@@ -60,7 +60,7 @@ const signup = async (req, res, next) => {
             )
         );
     }
-
+    // console.log(req.file.path);
     const createdPatient = new Patient({
         name,
         dateOfBirth,
@@ -68,7 +68,7 @@ const signup = async (req, res, next) => {
         gender,
         password: hashedPassword,
         phoneNo,
-        profileImage: "profileImage",
+        profileImage: req.files[0].path,
         appointments: []
     });
     try {

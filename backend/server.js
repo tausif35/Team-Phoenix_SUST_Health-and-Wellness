@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 
 require('dotenv').config();
 
@@ -31,12 +32,22 @@ app.use((req, res, next) => {
 
 // error handler
 app.use((err, req, res, next) => {
+    if(req.files){
+        req.files.forEach(file => {
+            fs.unlink(file.path, err => {
+                if (err) {
+                    console.log(err);
+                }
+            });
+        });
+    }
     if (res.headerSent) {
         return next(err);
     }
     res.status(err.code || 500);
     res.json({ message: err.message || `An unknown error occured` })
 });
+
 // server start
 mongoose.connect(process.env.DB_CONNECTION)
     .then(() => {

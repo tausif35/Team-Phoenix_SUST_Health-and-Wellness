@@ -16,7 +16,9 @@ const signup = async (req, res, next) => {
             )
         );
     }
-
+    // console.log(req.files[0].path);
+    // console.log(req.files[1].path);
+    // console.log(req.files[2].path);
     const {
         name,
         gender,
@@ -69,10 +71,10 @@ const signup = async (req, res, next) => {
         phoneNo,
         email,
         password: hashedPassword,
-        profileImage: "urlOfImage",
+        profileImage: req.files[0].path,
         medicalId,
-        licenseFront: "urlOfFrontImage",
-        licenseBack: "urlOfBackImage",
+        licenseFront: req.files[1].path,
+        licenseBack: req.files[2].path,
         specializations,
         qualifications,
         workplaces,

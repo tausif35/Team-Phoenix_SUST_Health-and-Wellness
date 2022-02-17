@@ -4,8 +4,12 @@ const router = express.Router();
 
 const doctorControllers = require('../controllers/doctor-controllers');
 const checkAuth = require('../middleware/check-auth');
+const filesUpload = require('../middleware/file-upload');
 
-router.post('/signup', doctorControllers.signup);
+router.post(
+    '/signup', 
+    filesUpload.array('image'),
+    doctorControllers.signup);
 
 
 router.post('/login', doctorControllers.login);
