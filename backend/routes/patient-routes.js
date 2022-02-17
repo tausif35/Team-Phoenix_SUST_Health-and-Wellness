@@ -8,7 +8,7 @@ const filesUpload = require('../middleware/file-upload');
 
 router.post(
     '/signup',
-    filesUpload.array('uploadedImages', 1),
+    filesUpload.array('image'),
     patientControllers.signup);
 
 router.post('/login', patientControllers.login);

@@ -17,7 +17,7 @@ const signup = async (req, res, next) => {
             )
         );
     }
-    console.log(req.files[0], path);
+    // console.log(req.files.path);
     const {
         name,
         dateOfBirth,
