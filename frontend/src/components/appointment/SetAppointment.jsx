@@ -1,5 +1,11 @@
-import { Avatar, Button, Chip, Grid, Stack, Typography } from "@mui/material";
-import { borderRadius, Box } from "@mui/system";
+import {
+  Avatar,
+  Button,
+  Chip,
+  Divider,
+  Stack,
+  Typography,
+} from "@mui/material";
 import React, { useState } from "react";
 import { API_HOST } from "../../constants/apiLinks";
 
@@ -18,7 +24,11 @@ function SetAppointment({ selectedDoctor }) {
           src={`${API_HOST}/${selectedDoctor.profileImage}`}
           sx={{ width: 300, height: 300 }}
         />
-        <Stack spacing={4} alignSelf={{ xs: "start", md: "center" }}>
+        <Stack
+          spacing={2}
+          alignSelf={{ xs: "start", md: "center" }}
+          divider={<Divider />}
+        >
           <Typography variant="h6">Name: {selectedDoctor.name}</Typography>
           <Typography variant="h6">Email: {selectedDoctor.email}</Typography>
           <Typography variant="h6">
@@ -31,17 +41,47 @@ function SetAppointment({ selectedDoctor }) {
         </Stack>
       </Stack>
 
-      <Stack spacing={5} border="1px solid #6f6f6f" borderRadius={2} p={2}>
+      <Stack
+        spacing={2}
+        border="1px solid #6f6f6f"
+        borderRadius={2}
+        p={2}
+        divider={<Divider />}
+      >
         <Typography variant="h6">
-          Qualifications: {selectedDoctor.qualifications.join(", ")}
+          Qualifications:
+          {selectedDoctor.qualifications.map((text, i) => (
+            <Chip
+              key={i}
+              label={text}
+              variant="outlined"
+              sx={{ m: 1, fontSize: "1rem" }}
+            />
+          ))}
         </Typography>
 
         <Typography variant="h6">
-          Specializations: {selectedDoctor.specializations.join(", ")}
+          Specializations:
+          {selectedDoctor.specializations.map((text, i) => (
+            <Chip
+              key={i}
+              label={text}
+              variant="outlined"
+              sx={{ m: 1, fontSize: "1rem" }}
+            />
+          ))}
         </Typography>
 
         <Typography variant="h6">
-          Workplaces: {selectedDoctor.workplaces.join(", ")}
+          Workplaces:
+          {selectedDoctor.workplaces.map((text, i) => (
+            <Chip
+              key={i}
+              label={text}
+              variant="outlined"
+              sx={{ m: 1, fontSize: "1rem" }}
+            />
+          ))}
         </Typography>
       </Stack>
 
@@ -49,7 +89,7 @@ function SetAppointment({ selectedDoctor }) {
         variant="contained"
         onClick={(e) => setOpenAppointment(!openAppointment)}
       >
-        {openAppointment ? "Cancel Appointment" : "Set Appointment"}
+        {openAppointment ? "Cancel" : "Select Appointment"}
       </Button>
     </Stack>
   );
