@@ -17,9 +17,8 @@ import { API_HOST } from "../../constants/apiLinks";
 import { Box } from "@mui/system";
 
 function DoctorItem({ item, onItemClick }) {
-  console.log(item);
   return (
-    <Card onClick={() => onItemClick(item._id)}>
+    <Card onClick={() => onItemClick(item)}>
       <CardActionArea>
         <CardMedia
           component="img"
@@ -62,7 +61,7 @@ function DoctorItem({ item, onItemClick }) {
         </Box>
       </CardContent>
       <CardActions>
-        <Button onClick={() => onItemClick(item._id)} fullWidth size="large">
+        <Button onClick={() => onItemClick(item)} fullWidth size="large">
           View
         </Button>
       </CardActions>

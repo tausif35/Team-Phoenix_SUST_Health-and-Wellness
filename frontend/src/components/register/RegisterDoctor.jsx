@@ -127,7 +127,7 @@ function RegisterDoctor() {
       formData.append("image", licenseBack);
       formData.append("specializations", JSON.stringify(specializations));
       formData.append("qualifications", JSON.stringify(qualifications));
-      formData.append("workplaces", JSON.stringify(qualifications));
+      formData.append("workplaces", JSON.stringify(workplaces));
 
       dispatch(register("doctor", formData));
     } else {
