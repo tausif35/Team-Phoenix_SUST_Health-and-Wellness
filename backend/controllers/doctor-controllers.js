@@ -75,9 +75,9 @@ const signup = async (req, res, next) => {
         medicalId,
         licenseFront: req.files[1].path,
         licenseBack: req.files[2].path,
-        specializations,
-        qualifications,
-        workplaces,
+        specializations: JSON.parse(specializations),
+        qualifications: JSON.parse(qualifications),
+        workplaces: JSON.parse(workplaces),
         appointments: []
     });
     try {
@@ -230,7 +230,7 @@ const editInfo = async (req, res, next) => {
             )
         );
     }
-    if(!updatedDoctor) {
+    if (!updatedDoctor) {
         return next(
             new HttpError(
                 "Something went wrong, could not update information.",
@@ -305,7 +305,7 @@ const changePassword = async (req, res, next) => {
         );
     }
 
-    if(!updatedDoctor) {
+    if (!updatedDoctor) {
         return next(
             new HttpError(
                 "Something went wrong, could not update information.",

@@ -11,6 +11,7 @@ require('dotenv').config();
 const HttpError = require('./models/http-error');
 const patientRoutes = require('./routes/patient-routes');
 const doctorRoutes = require('./routes/doctor-routes');
+const appointmentRoutes = require('./routes/appointment-routes');
 const generalRoutes = require('./routes/general-routes');
 
 const app = express();
@@ -23,6 +24,7 @@ app.use('/public/uploads', express.static(path.join('public', 'uploads')));
 
 app.use('/api/patients', patientRoutes);
 app.use('/api/doctors', doctorRoutes);
+app.use('/api/appointments', appointmentRoutes);
 app.use('/api', generalRoutes);
 
 app.use((req, res, next) => {
