@@ -25,6 +25,8 @@ export const GET_USER_PROFILE = `${API_HOST}/api/users/profile`;
 //@format API_HOST/api/users/profile
 export const UPDATE_USER_PROFILE = `${API_HOST}/api/users/profile`;
 
-export const GET_DOCTOR_LIST = `${API_HOST}/api/patients/findDoctors`;
+export const GET_DOCTOR_LIST = `${API_HOST}/api/doctors/find`;
 
 export const POST_QUESTION = `${API_HOST}/api/QnA/question`;
+
+export const GET_QUESTION_LIST = `${API_HOST}/api/QnA`;

@@ -2,8 +2,8 @@ const Question = require("../models/questionModel");
 const Answer = require("../models/answerModel");
 const Patient = require("../models/patient");
 const Doctor = require("../models/doctor");
-const HttpError = require('../models/http-error');
-const mongoose = require('mongoose');
+const HttpError = require("../models/http-error");
+const mongoose = require("mongoose");
 
 // return next(
 //   new HttpError(
@@ -12,23 +12,12 @@ const mongoose = require('mongoose');
 //   )
 // );
 
-
 exports.getAllQuestion = async (req, res, next) => {
-  const questions = await Question.find().populate();
+  const { category } = req.query;
 
-  res.status(200).json({
-    message: "successful",
-    No_of_questions: questions.length,
-    data: {
-      questions,
-    },
-  });
-};
+  if (!category) {
+    const questions = await Question.find().populate();
 
-exports.getQuestionByCategory = async (req, res, next) => {
-  const category = req.query;
-  try {
-    const questions = await Question.find({ category: category }).populate();
     res.status(200).json({
       message: "successful",
       No_of_questions: questions.length,
@@ -36,10 +25,55 @@ exports.getQuestionByCategory = async (req, res, next) => {
         questions,
       },
     });
-  } catch (error) {
-    return next(new HttpError("Something Went Wrong", 401));
+  } else {
+    console.log("category");
+
+    try {
+      const questions = await Question.find({
+        questionCategory: category,
+      }).populate();
+
+      res.status(200).json({
+        message: "successful",
+        No_of_questions: questions.length,
+        data: {
+          questions,
+        },
+      });
+    } catch (error) {
+      return next(new HttpError("Something Went Wrong", 401));
+    }
   }
-}
+};
+
+exports.getQuestionByCategory = async (req, res, next) => {
+  const { category } = req.query;
+
+  if (!category) {
+    const questions = await Question.find().populate();
+
+    res.status(200).json({
+      message: "successful",
+      No_of_questions: questions.length,
+      data: {
+        questions,
+      },
+    });
+  } else {
+    try {
+      const questions = await Question.find({ category: category }).populate();
+      res.status(200).json({
+        message: "successful",
+        No_of_questions: questions.length,
+        data: {
+          questions,
+        },
+      });
+    } catch (error) {
+      return next(new HttpError("Something Went Wrong", 401));
+    }
+  }
+};
 
 exports.askAQuestion = async (req, res, next) => {
   console.log(req.body);
@@ -61,12 +95,14 @@ exports.askAQuestion = async (req, res, next) => {
     _askerId: userId,
   });
 
-
   let patient;
   try {
     patient = await Patient.findById(userId);
   } catch (err) {
-    const error = new HttpError("Failed to Ask Question , please try again", 500);
+    const error = new HttpError(
+      "Failed to Ask Question , please try again",
+      500
+    );
     return next(error);
   }
   if (!patient) {
@@ -83,11 +119,12 @@ exports.askAQuestion = async (req, res, next) => {
     await session.commitTransaction();
   } catch (err) {
     console.log(err.message);
-    const error = new HttpError("Failed to Ask Question, please try again", 500);
+    const error = new HttpError(
+      "Failed to Ask Question, please try again",
+      500
+    );
     return next(error);
   }
-
-
 
   res.status(201).json({
     message: "successful",
@@ -107,19 +144,18 @@ exports.getQuestionsOfAnUser = async (req, res, next) => {
 
   try {
     if (req.userData.type === "patient") {
-      user = await (await Patient.findById(id)).populate('questions');
+      user = await (await Patient.findById(id)).populate("questions");
     } else {
-      user = await Doctor.findById(id).populate('questions');
+      user = await Doctor.findById(id).populate("questions");
     }
   } catch (error) {
     console.log(error.message);
   }
 
-
   res.status(200).json({
     message: "successful",
     data: {
-      questions: user.questions.map(id => id.toObject({ getters: true })),
+      questions: user.questions.map((id) => id.toObject({ getters: true })),
     },
   });
 };
@@ -134,7 +170,7 @@ exports.getAQuestion = async (req, res, next) => {
     message: "successful",
     data: {
       question,
-      id: req.userData.id
+      id: req.userData.id,
     },
   });
 };
@@ -160,7 +196,7 @@ exports.answerQuestion = async (req, res, next) => {
     _questionId: req.params.id,
     answer: req.body.answer,
     answeredBy: doctor.id,
-    upvotes: []
+    upvotes: [],
   });
 
   res.status(201).json({
