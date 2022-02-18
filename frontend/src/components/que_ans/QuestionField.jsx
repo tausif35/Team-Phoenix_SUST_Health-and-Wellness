@@ -1,38 +1,69 @@
 import {
+  Alert,
   Autocomplete,
   Button,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  InputBase,
+  FormControlLabel,
+  LinearProgress,
+  MenuItem,
   Paper,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import { Box } from "@mui/system";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { postQuestion } from "../../actions/queAnsActions";
 import { questionCategories } from "../../utils/categoryList";
 
 function QuestionField() {
+  const dispatch = useDispatch();
   const [showDialog, setShowDialog] = useState(false);
   const [valueMissing, setValueMissing] = useState(false);
-  const [queCategories, setQueCategories] = useState([]);
-  const [question, setQuestion] = useState("");
+  const [questionCategory, setQuestionCategory] = useState("");
+  const [questionBody, setQuestionBody] = useState("");
+  const [questionTitle, setQuestionTitle] = useState("");
+  const [anonymous, setAnonymous] = useState(false);
+
+  const { loading, success, error } = useSelector((state) => state.askQuestion);
+
+  useEffect(() => {
+    if (success) {
+      handleDialogClose();
+    }
+  }, [success]);
 
   const handleDialogClose = () => {
+    setQuestionTitle("");
+    setQuestionBody("");
+    setQuestionCategory("");
+    setAnonymous(false);
     setShowDialog(false);
+    setValueMissing(false);
   };
 
   const handlePost = () => {
-    console.log(question);
-    console.log(queCategories);
-    setShowDialog(false);
+    if (questionCategory && questionBody && questionTitle) {
+      dispatch(
+        postQuestion({
+          questionTitle,
+          questionBody,
+          questionCategory,
+          anonymous,
+        })
+      );
+      setValueMissing(false);
+    } else {
+      setValueMissing(true);
+    }
   };
 
   return (
-    <Paper sx={{ width: "100%", maxWidth: "800px", alignSelf: "center" }}>
+    <Paper sx={{ width: "100%", maxWidth: "1000px" }}>
       <Stack p={3} spacing={2}>
         <Typography variant="h5">Ask Questions</Typography>
 
@@ -48,43 +79,74 @@ function QuestionField() {
           <DialogTitle>Ask Your Question</DialogTitle>
 
           <DialogContent>
-            <Stack spacing={4}>
+            <Stack spacing={4} py={1}>
+              {loading && <LinearProgress />}
+
+              {error && <Alert severity="error">{error}</Alert>}
+
               <TextField
-                multiline
-                rows={4}
-                variant="filled"
-                placeholder="Write your question here"
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
+                variant="standard"
+                label="Question Title"
+                error={valueMissing && !questionTitle}
+                helperText={
+                  valueMissing && !questionTitle
+                    ? "Please write your question title"
+                    : ""
+                }
+                onChange={(e) => setQuestionTitle(e.target.value)}
+                defaultValue=""
               />
 
-              <Autocomplete
-                multiple
+              <TextField
+                multiline
+                minRows={4}
+                variant="standard"
+                placeholder="Write your question description"
+                error={valueMissing && !questionBody}
+                helperText={
+                  valueMissing && !questionBody
+                    ? "Please write your question description"
+                    : ""
+                }
+                onChange={(e) => setQuestionBody(e.target.value)}
+                defaultValue=""
+              />
+
+              <TextField
                 fullWidth
-                value={queCategories}
-                options={questionCategories}
-                getOptionLabel={(option) => option}
-                onChange={(e, values) => setQueCategories(values)}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="outlined"
-                    label="Categories"
-                    error={valueMissing && !queCategories.length}
-                    helperText={
-                      valueMissing && !queCategories.length
-                        ? "Please set your question categories"
-                        : ""
-                    }
-                    sx={{ borderRadius: "100px" }}
+                variant="outlined"
+                label="Select Category"
+                select
+                error={valueMissing && !questionCategory}
+                helperText={
+                  valueMissing && !questionCategory
+                    ? "Please select your question category"
+                    : ""
+                }
+                onChange={(e) => setQuestionCategory(e.target.value)}
+                defaultValue=""
+              >
+                {questionCategories.map((option, index) => (
+                  <MenuItem key={index} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </TextField>
+
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
+                    onChange={(e) => setAnonymous(e.target.checked)}
                   />
-                )}
+                }
+                label="Ask anonymously"
               />
             </Stack>
           </DialogContent>
 
           <DialogActions>
-            <Button onClick={handleDialogClose}>Close</Button>
+            <Button onClick={handleDialogClose}>Cancel</Button>
             <Button onClick={handlePost}>Post</Button>
           </DialogActions>
         </Dialog>

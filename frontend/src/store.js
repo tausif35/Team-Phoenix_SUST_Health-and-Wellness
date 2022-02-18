@@ -2,6 +2,7 @@ import { applyMiddleware, combineReducers, createStore } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import thunk from "redux-thunk";
 import { doctorListReducer } from "./reducers/appointmentReducer";
+import { askQuestionReducer } from "./reducers/queAnsReducer";
 import { socketConnectionReducer } from "./reducers/socketReducer";
 import {
   userDetailsReducer,
@@ -18,6 +19,7 @@ const reducer = combineReducers({
   userProfileUpdate: userProfileUpdateReducer,
   userPasswordUpdate: userPasswordUpdateReducer,
   doctorList: doctorListReducer,
+  askQuestion: askQuestionReducer,
   socketConnection: socketConnectionReducer,
 });
 

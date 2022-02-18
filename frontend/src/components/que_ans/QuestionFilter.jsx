@@ -5,7 +5,7 @@ import MuiAccordionSummary from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
-import { Divider, MenuItem, Stack, TextField } from "@mui/material";
+import { Button, Divider, MenuItem, Stack, TextField } from "@mui/material";
 import { questionCategories } from "../../utils/categoryList";
 
 const Accordion = styled((props) => (
@@ -27,9 +27,7 @@ const AccordionSummary = styled((props) => (
   />
 ))(({ theme }) => ({
   backgroundColor:
-    theme.palette.mode === "dark"
-      ? "rgba(255, 255, 255, .05)"
-      : "rgba(0, 0, 0, .03)",
+    theme.palette.mode === "dark" ? "rgba(255, 255, 255, .05)" : "#0000007",
   flexDirection: "row-reverse",
   "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
     transform: "rotate(90deg)",
@@ -48,6 +46,16 @@ function QuestionFilter() {
   const [expanded, setExpanded] = useState(true);
   const [category, setCategory] = useState("");
   const [sortBy, setSortBy] = useState("");
+
+  const handleOnApply = () => {
+    console.log(category);
+    console.log(sortBy);
+  };
+
+  const handleOnClear = () => {
+    setCategory("");
+    setSortBy("");
+  };
 
   return (
     <div>
@@ -89,6 +97,16 @@ function QuestionFilter() {
                 </MenuItem>
               ))}
             </TextField>
+
+            <Stack spacing={1} direction="row">
+              <Button fullWidth variant="outlined" onClick={handleOnClear}>
+                Clear
+              </Button>
+
+              <Button fullWidth variant="contained" onClick={handleOnApply}>
+                Apply
+              </Button>
+            </Stack>
           </Stack>
         </AccordionDetails>
       </Accordion>

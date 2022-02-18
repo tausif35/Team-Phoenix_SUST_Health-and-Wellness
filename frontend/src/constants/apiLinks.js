@@ -26,3 +26,5 @@ export const GET_USER_PROFILE = `${API_HOST}/api/users/profile`;
 export const UPDATE_USER_PROFILE = `${API_HOST}/api/users/profile`;
 
 export const GET_DOCTOR_LIST = `${API_HOST}/api/patients/findDoctors`;
+
+export const POST_QUESTION = `${API_HOST}/api/QnA/question`;

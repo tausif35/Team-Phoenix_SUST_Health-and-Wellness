@@ -5,8 +5,7 @@ import MuiAccordionSummary from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
-import { Divider, MenuItem, Stack, TextField } from "@mui/material";
-import { questionCategories } from "../../utils/categoryList";
+import { Divider, Stack } from "@mui/material";
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
