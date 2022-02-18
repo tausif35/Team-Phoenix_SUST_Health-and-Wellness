@@ -7,7 +7,7 @@ const Doctor = require('../models/doctor');
 const doctor = require('../models/doctor');
 
 
-const signup = async (req, res, next) => {
+exports.signup = async (req, res, next) => {
     const error = validationResult(req);
     if (!error.isEmpty()) {
         return next(
@@ -125,7 +125,7 @@ const signup = async (req, res, next) => {
     });
 };
 
-const login = async (req, res, next) => {
+exports.login = async (req, res, next) => {
     const { email, password } = req.body;
 
     let existingDoctor;
@@ -200,7 +200,7 @@ const login = async (req, res, next) => {
     });
 };
 
-const editInfo = async (req, res, next) => {
+exports.editInfo = async (req, res, next) => {
     const error = validationResult(req);
     if (!error.isEmpty()) {
         return next(
@@ -276,7 +276,7 @@ const editInfo = async (req, res, next) => {
     res.status(200).json({ doctor: updatedDoctor.toObject({ getters: true }) });
 };
 
-const changePassword = async (req, res, next) => {
+exports.changePassword = async (req, res, next) => {
     const error = validationResult(req);
     if (!error.isEmpty()) {
         return next(
@@ -370,6 +370,64 @@ const changePassword = async (req, res, next) => {
     res.status(200).json({ doctor: updatedDoctor.toObject({ getters: true }) });
 };
 
+exports.getDoctors = async (req, res, next) => {
+    const { doctorName, speciality } = req.query;
+    let doctors;
+    try {
+        doctors = await Doctor.find();
+    } catch (error) {
+        return next(
+            new HttpError(
+                "Something went wrong, could not get doctors.",
+                500
+            )
+        );
+    }
+    if (!doctors) {
+        return next(
+            new HttpError(
+                "Could not find any doctors.",
+                404
+            )
+        );
+    }
+    let filteredDoctors;
+    if (doctorName && speciality) {
+        filteredDoctors = doctors.filter(doctor => doctor.name.toLowerCase().includes(doctorName.toLowerCase()) 
+        && doctor.specializations.some(s => s.toLowerCase().includes(speciality.toLowerCase())))
+    }else if (doctorName) {
+        filteredDoctors = doctors.filter(doctor => doctor.name.toLowerCase().includes(doctorName.toLowerCase()))
+    }else if (speciality) {
+        filteredDoctors = doctors.filter(doctor => doctor.specializations.some(s => s.toLowerCase().includes(speciality.toLowerCase())))
+    }else{
+        filteredDoctors = doctors;
+    }
+    res.status(200).json({ doctors: filteredDoctors.map(doctor => doctor.toObject({ getters: true })) });
+};
+
+exports.getDoctor = async (req, res, next) => {
+    const doctorId = req.params.doctorId;
+    let doctor;
+    try {
+        doctor = await Doctor.findById(doctorId);
+    } catch (error) {
+        return next(
+            new HttpError(
+                "Something went wrong, could not get doctor.",
+                500
+            )
+        );
+    }
+    if (!doctor) {
+        return next(
+            new HttpError(
+                "Could not find doctor.",
+                404
+            )
+        );
+    }
+    res.status(200).json({ doctor: doctor.toObject({ getters: true }) });
+};
 exports.getAllAppointments = async (req, res, next)=>{
     const doctorId = req.params.id? req.params.id: req.userData.id;
     let doctor;
@@ -388,7 +446,7 @@ exports.getAllAppointments = async (req, res, next)=>{
     });
 }
 
-exports.signup = signup;
-exports.login = login;
-exports.editInfo = editInfo;
-exports.changePassword = changePassword;
+// exports.signup = signup;
+// exports.login = login;
+// exports.editInfo = editInfo;
+// exports.changePassword = changePassword;

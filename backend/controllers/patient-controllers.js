@@ -8,7 +8,7 @@ const Doctor = require('../models/doctor');
 const Appointment = require('../models/appointment');
 
 
-const signup = async (req, res, next) => {
+exports.signup = async (req, res, next) => {
     const error = validationResult(req);
     if (!error.isEmpty()) {
         return next(
@@ -116,7 +116,7 @@ const signup = async (req, res, next) => {
     });
 };
 
-const login = async (req, res, next) => {
+exports.login = async (req, res, next) => {
     const { email, password } = req.body;
 
     let existingPatient;
@@ -193,7 +193,7 @@ const login = async (req, res, next) => {
 
 };
 
-const editInfo = async (req, res, next) => {
+exports.editInfo = async (req, res, next) => {
     const error = validationResult(req);
     if (!error.isEmpty()) {
         return next(
@@ -265,7 +265,7 @@ const editInfo = async (req, res, next) => {
     res.status(200).json({ patient: updatedPatient.toObject({ getters: true }) });
 };
 
-const changePassword = async (req, res, next) => {
+exports.changePassword = async (req, res, next) => {
     const error = validationResult(req);
     if (!error.isEmpty()) {
         return next(
@@ -375,71 +375,3 @@ exports.getAllAppointments = async (req, res, next)=>{
         } 
     });
 }
-
-const getDoctors = async (req, res, next) => {
-    const { doctorName, speciality } = req.body;
-    let doctors;
-    try {
-        doctors = await Doctor.find();
-    } catch (error) {
-        return next(
-            new HttpError(
-                "Something went wrong, could not get doctors.",
-                500
-            )
-        );
-    }
-    if (!doctors) {
-        return next(
-            new HttpError(
-                "Could not find any doctors.",
-                404
-            )
-        );
-    }
-    let filteredDoctors;
-    if (doctorName && speciality) {
-        filteredDoctors = doctors.filter(doctor => doctor.name.toLowerCase().includes(doctorName.toLowerCase()) 
-        && doctor.specializations.some(s => s.toLowerCase().includes(speciality.toLowerCase())))
-    }else if (doctorName) {
-        filteredDoctors = doctors.filter(doctor => doctor.name.toLowerCase().includes(doctorName.toLowerCase()))
-    }else if (speciality) {
-        filteredDoctors = doctors.filter(doctor => doctor.specializations.some(s => s.toLowerCase().includes(speciality.toLowerCase())))
-    }else{
-        filteredDoctors = doctors;
-    }
-    res.status(200).json({ doctors: filteredDoctors.map(doctor => doctor.toObject({ getters: true })) });
-};
-
-const getDoctor = async (req, res, next) => {
-    const doctorId = req.params.doctorId;
-    let doctor;
-    try {
-        doctor = await Doctor.findById(doctorId);
-    } catch (error) {
-        return next(
-            new HttpError(
-                "Something went wrong, could not get doctor.",
-                500
-            )
-        );
-    }
-    if (!doctor) {
-        return next(
-            new HttpError(
-                "Could not find doctor.",
-                404
-            )
-        );
-    }
-    res.status(200).json({ doctor: doctor.toObject({ getters: true }) });
-};
-
-
-
-exports.signup = signup;
-exports.login = login;
-exports.editInfo = editInfo;
-exports.changePassword = changePassword;
-exports.getDoctors = getDoctors;
-exports.getDoctor = getDoctor;
