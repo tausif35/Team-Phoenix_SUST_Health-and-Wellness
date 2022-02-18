@@ -5,6 +5,7 @@ const router = express.Router();
 const doctorControllers = require('../controllers/doctor-controllers');
 const checkAuth = require('../middleware/check-auth');
 const filesUpload = require('../middleware/file-upload');
+const chatController = require('../controllers/chatController');
 
 router.post(
     '/signup', 
@@ -30,5 +31,8 @@ router.get('/find/:doctorId', doctorControllers.getDoctor);
 router.get('/appointments', doctorControllers.getAllAppointments);
 
 router.get('/:id', doctorControllers.getAllAppointments);
+
+// id of patient
+router.get("/chatInfo/:id", chatController.getChatInfo);
 
 module.exports = router;
