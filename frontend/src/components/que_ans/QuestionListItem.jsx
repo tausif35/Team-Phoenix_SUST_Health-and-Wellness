@@ -2,7 +2,7 @@ import { ArrowForwardIos } from "@mui/icons-material";
 import { Card, CardActionArea, Chip, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-function QuestionList({ item }) {
+function QuestionListItem({ item }) {
   const navigate = useNavigate();
 
   const onItemClick = () => {
@@ -34,15 +34,13 @@ function QuestionList({ item }) {
           </Typography>
 
           <Typography variant="body2" color={"text.secondary"}>
-            — {item.askedBy ? item.askedBy : "Anonymous"}
+            — {item.askedBy ? item.askedBy : "Anonymous"} at Date and Time
           </Typography>
 
           <Typography variant="body2" color={"text.secondary"}>
             {item._answersId.length} Answers
           </Typography>
         </Stack>
-
-        <Typography variant="subtitle1">{"Date&Time"}</Typography>
 
         <Stack spacing={3} direction={"row"}>
           <Chip
@@ -57,4 +55,4 @@ function QuestionList({ item }) {
   );
 }
 
-export default QuestionList;
+export default QuestionListItem;

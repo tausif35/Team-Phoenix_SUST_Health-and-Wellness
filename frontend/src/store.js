@@ -4,6 +4,7 @@ import thunk from "redux-thunk";
 import { doctorListReducer } from "./reducers/appointmentReducer";
 import {
   askQuestionReducer,
+  personalQuestionsReducer,
   questionListReducer,
   singleQuestionReducer,
   writeAnswerReducer,
@@ -27,6 +28,7 @@ const reducer = combineReducers({
   askQuestion: askQuestionReducer,
   questionList: questionListReducer,
   singleQuestion: singleQuestionReducer,
+  personalQuestions: personalQuestionsReducer,
   writeAnswer: writeAnswerReducer,
   socketConnection: socketConnectionReducer,
 });

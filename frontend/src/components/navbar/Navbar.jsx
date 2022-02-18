@@ -15,7 +15,7 @@ const Container = styled.div`
   flex-wrap: wrap;
   padding: 0 1rem;
   background: #fff;
-  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.2);
+  border-bottom: 0.5px solid #dbdbdb;
 `;
 
 const StyledLink = styled(Link)`

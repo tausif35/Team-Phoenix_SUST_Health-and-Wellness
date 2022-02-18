@@ -1,86 +1,126 @@
 import styled from "@emotion/styled";
-import { useState } from "react";
-import ReactQuill, { Quill } from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import { Close, Delete } from "@mui/icons-material";
+import {
+  Button,
+  IconButton,
+  InputBase,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { Box } from "@mui/system";
+import React, { useState } from "react";
+import RichEditor from "../components/RichEditor";
 
-const Editor = styled(ReactQuill)`
-  margin: 2rem;
-
-  .ql-container {
-    min-height: 60vh;
-    font-size: 16px;
-  }
-
-  .ql-toolbar {
-    background: #f0f0f0;
-  }
-
-  .ql-snow {
-    .ql-picker {
-      &.ql-size {
-        .ql-picker-label,
-        .ql-picker-item {
-          &::before {
-            content: attr(data-value) !important;
-          }
-        }
-      }
-    }
-  }
+const CoverPic = styled.img`
+  width: 100%;
+  max-height: 300px;
+  border-radius: 10px;
+  object-fit: cover;
 `;
 
-function BlogPage() {
-  const fontSize = [
-    "16px",
-    "20px",
-    "24px",
-    "28px",
-    "32px",
-    "36px",
-    "40px",
-    "44px",
-    "48px",
-    "52px",
-    "56px",
-  ];
+const Label = styled.label`
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+`;
 
-  const Size = Quill.import("attributors/style/size");
-  Size.whitelist = fontSize;
-  Quill.register(Size, true);
+function BlogCreatePage() {
+  const [valueMissing, setValueMissing] = useState(false);
+  const [editorValue, setEditorValue] = useState("");
+  const [blogTitle, setBlogTitle] = useState("");
+  const [blogImage, setBlogImage] = useState(null);
 
-  const modules = {
-    toolbar: [
-      ["bold", "italic", "underline", "strike"], // Font style
-      ["blockquote", "code-block"],
-      [{ list: "ordered" }, { list: "bullet" }], // List type
-      [{ script: "sub" }, { script: "super" }], // Superscript/subscript
-      [{ indent: "-1" }, { indent: "+1" }], // Out-dent/Indent
-      [{ direction: "rtl" }], // Text direction
-      [{ size: fontSize }], // Font size
-      [{ header: [false, 1, 2, 3] }], // Headers
-      [{ color: [] }, { background: [] }], // Text colors
-      [{ font: [] }], // Fonts
-      [{ align: [] }], // Text align
-      ["link"], // Inset link
-      ["clean"], // Clear all formatting
-    ],
+  const onEditorChange = (value) => {
+    setEditorValue(value);
+    console.log(value);
   };
 
-  const [value, setValue] = useState(null);
+  const onFileSelect = (e) => {
+    if (e.target.files[0]) {
+      setBlogImage(e.target.files[0]);
+    }
+  };
+
+  const handlePostClick = () => {
+    if (editorValue && editorValue !== "<p><br></p>" && blogTitle) {
+      console.log(editorValue);
+    }
+  };
 
   return (
-    <div>
-      <Editor
-        theme={"snow"}
-        modules={modules}
-        value={value}
-        onChange={(value) => setValue(value)}
-        placeholder="Write here"
-      />
-      <div dangerouslySetInnerHTML={{ __html: value }}></div>
-      <div>{value}</div>
-    </div>
+    <Stack padding={4} bgcolor={"#fff"} alignItems="center">
+      <Stack spacing={4} maxWidth="800px">
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            position: "relative",
+            alignSelf: "center",
+            alignItems: "center",
+          }}
+        >
+          <CoverPic
+            src={
+              blogImage
+                ? URL.createObjectURL(blogImage)
+                : "https://healthtechmagazine.net/sites/healthtechmagazine.net/files/styles/cdw_hero/public/articles/%5Bcdw_tech_site%3Afield_site_shortname%5D/202007/20200630_HT_Web_MonITor_Tech-Organizations-Should-Consider.jpg?"
+            }
+          />
+
+          <Label htmlFor="contained-button-file">
+            <InputBase
+              id="contained-button-file"
+              type={"file"}
+              name="profilePic"
+              accept=".png, .jpg, .jpeg"
+              onChange={onFileSelect}
+              sx={{ display: "none" }}
+            />
+            <Button
+              fullWidth
+              variant="contained"
+              component="span"
+              color={"primary"}
+            >
+              Upload cover image
+            </Button>
+          </Label>
+
+          {blogImage && (
+            <IconButton
+              color="error"
+              sx={{ position: "absolute", top: "10px", right: "10px" }}
+              onClick={() => setBlogImage(null)}
+            >
+              <Delete />
+            </IconButton>
+          )}
+        </Box>
+
+        <Stack spacing={1}>
+          <Typography variant="h6">Blog Title</Typography>
+
+          <TextField
+            variant="outlined"
+            placeholder="Give Title"
+            error={valueMissing && !blogTitle}
+            helperText={
+              valueMissing && !blogTitle ? "Please write your blog title" : ""
+            }
+            onChange={(e) => setBlogTitle(e.target.value)}
+            defaultValue=""
+            inputProps={{ style: { fontSize: 20 } }}
+          />
+        </Stack>
+        <RichEditor onEditorChange={onEditorChange} />
+
+        <Button variant="contained" size="large" onClick={handlePostClick}>
+          Post your blog
+        </Button>
+      </Stack>
+    </Stack>
   );
 }
 
-export default BlogPage;
+export default BlogCreatePage;

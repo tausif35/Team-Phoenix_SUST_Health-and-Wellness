@@ -4,12 +4,14 @@ import { useSelector } from "react-redux";
 import PersonalQuestion from "../components/que_ans/PersonalQuestions";
 import QuestionField from "../components/que_ans/QuestionField";
 import QuestionFilter from "../components/que_ans/QuestionFilter";
-import QuestionList from "../components/que_ans/QuestionList";
+import QuestionListItem from "../components/que_ans/QuestionListItem";
 
 function QueAnsPage() {
   const { loading, error, questions } = useSelector(
     (state) => state.questionList
   );
+
+  const { userInfo } = useSelector((state) => state.userLogin);
 
   return (
     <Grid container spacing={4} p={4} columns={{ xs: 1, md: 9 }}>
@@ -29,12 +31,12 @@ function QueAnsPage() {
           )}
 
           {questions.map((item, index) => (
-            <QuestionList key={index} item={item} />
+            <QuestionListItem key={index} item={item} />
           ))}
         </Stack>
       </Grid>
       <Grid item xs={1} md={2}>
-        <PersonalQuestion />
+        {userInfo.role === "user" && <PersonalQuestion />}
       </Grid>
     </Grid>
   );

@@ -1,18 +1,10 @@
-import { Send } from "@mui/icons-material";
-import {
-  Divider,
-  Stack,
-  Typography,
-  Chip,
-  Paper,
-  InputBase,
-  IconButton,
-} from "@mui/material";
-import React, { useEffect } from "react";
+import { Stack } from "@mui/material";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { getSingleQuestion } from "../actions/queAnsActions";
 import AnswerField from "../components/que_ans/AnswerField";
+import AnswerList from "../components/que_ans/AnswerList";
 import SingleQuestion from "../components/que_ans/SingleQuestion";
 
 function SingleQnAPage() {
@@ -23,6 +15,8 @@ function SingleQnAPage() {
     (state) => state.singleQuestion
   );
 
+  const { userInfo } = useSelector((state) => state.userLogin);
+
   useEffect(() => {
     dispatch(getSingleQuestion(params.questionId));
   }, [dispatch, params.questionId]);
@@ -30,7 +24,10 @@ function SingleQnAPage() {
   return question && Object.keys(question).length ? (
     <Stack spacing={4} alignItems="center" p={4}>
       <SingleQuestion item={question} />
-      <AnswerField questionId={params.questionId} />
+      {userInfo.role === "doctor" && (
+        <AnswerField questionId={params.questionId} />
+      )}
+      <AnswerList answers={question.answers} />
     </Stack>
   ) : (
     <></>

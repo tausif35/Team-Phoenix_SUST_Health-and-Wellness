@@ -1,4 +1,7 @@
 import {
+  GET_PERSONAL_QUESTIONS_FAIL,
+  GET_PERSONAL_QUESTIONS_REQUEST,
+  GET_PERSONAL_QUESTIONS_SUCCESS,
   GET_QUESTIONS_FAIL,
   GET_QUESTIONS_REQUEST,
   GET_QUESTIONS_SUCCESS,
@@ -57,9 +60,22 @@ export const writeAnswerReducer = (state = {}, action) => {
     case POST_ANSWER_REQUEST:
       return { loading: true };
     case POST_ANSWER_SUCCESS:
-      return { loading: false, answer: action.payload };
+      return { loading: false, success: true, answer: action.payload };
     case POST_ANSWER_FAIL:
-      return { loading: false, error: action.payload };
+      return { loading: false, success: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const personalQuestionsReducer = (state = { questions: [] }, action) => {
+  switch (action.type) {
+    case GET_PERSONAL_QUESTIONS_REQUEST:
+      return { loading: true, questions: [] };
+    case GET_PERSONAL_QUESTIONS_SUCCESS:
+      return { loading: false, questions: action.payload };
+    case GET_PERSONAL_QUESTIONS_FAIL:
+      return { loading: false, questions: [], error: action.payload };
     default:
       return state;
   }

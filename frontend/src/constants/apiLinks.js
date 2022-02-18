@@ -33,4 +33,10 @@ export const GET_QUESTION_LIST = `${API_HOST}/api/QnA`;
 
 export const GET_SINGLE_QUESTION = `${API_HOST}/api/QnA/question`;
 
+export const GET_PERSONAL_QUESTIONS = `${API_HOST}/api/QnA/user`;
+
 export const POST_ANSWER = `${API_HOST}/api/QnA/answer`;
+
+export const GET_SINGLE_ANSWER = `${API_HOST}/api/QnA/answer`;
+
+export const UPVOTE_ANSWER = `${API_HOST}/api/QnA/upvote`;

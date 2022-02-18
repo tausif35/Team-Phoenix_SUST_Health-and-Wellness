@@ -1,11 +1,15 @@
 import axios from "axios";
 import {
+  GET_PERSONAL_QUESTIONS,
   GET_QUESTION_LIST,
   GET_SINGLE_QUESTION,
   POST_ANSWER,
   POST_QUESTION,
 } from "../constants/apiLinks";
 import {
+  GET_PERSONAL_QUESTIONS_FAIL,
+  GET_PERSONAL_QUESTIONS_REQUEST,
+  GET_PERSONAL_QUESTIONS_SUCCESS,
   GET_QUESTIONS_FAIL,
   GET_QUESTIONS_REQUEST,
   GET_QUESTIONS_SUCCESS,
@@ -57,6 +61,8 @@ export const postQuestion = (question) => async (dispatch, getState) => {
       type: GET_QUESTIONS_SUCCESS,
       payload: [...questions, res.data.data.newQuestion],
     });
+
+    dispatch(getPersonalQuestions());
   } catch (error) {
     dispatch({
       type: POST_QUESTION_FAIL,
@@ -159,13 +165,20 @@ export const postAnswer =
 
       dispatch({
         type: POST_ANSWER_SUCCESS,
-        payload: res.data,
+        payload: res.data.data.newAnswer,
       });
 
-      // dispatch({
-      //   type: GET_QUESTIONS_SUCCESS,
-      //   payload: [...questions, res.data.data.newQuestion],
-      // });
+      const {
+        singleQuestion: { question },
+      } = getState();
+
+      dispatch({
+        type: GET_SINGLE_QUESTION_SUCCESS,
+        payload: {
+          ...question,
+          answers: [...question.answers, res.data.data.newAnswer],
+        },
+      });
     } catch (error) {
       dispatch({
         type: POST_ANSWER_FAIL,
@@ -176,3 +189,38 @@ export const postAnswer =
       });
     }
   };
+
+export const getPersonalQuestions = () => async (dispatch, getState) => {
+  try {
+    dispatch({ type: GET_PERSONAL_QUESTIONS_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const res = await axios.get(
+      `${GET_PERSONAL_QUESTIONS}/${userInfo.id}`,
+      config
+    );
+
+    dispatch({
+      type: GET_PERSONAL_QUESTIONS_SUCCESS,
+      payload: res.data.data.questions,
+    });
+  } catch (error) {
+    dispatch({
+      type: GET_PERSONAL_QUESTIONS_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};

@@ -10,6 +10,7 @@ import AppointmentPage from "./pages/AppointmentPage";
 import QueAnsPage from "./pages/QueAnsPage";
 import BlogsPage from "./pages/BlogsPage";
 import SingleQnAPage from "./pages/SingleQnAPage";
+import BlogCreatePage from "./pages/BlogCreatePage";
 
 function App() {
   return (
@@ -22,6 +23,8 @@ function App() {
         <Route path="/q-a" element={<QueAnsPage />} />
         <Route path="/q-a/:questionId" element={<SingleQnAPage />} />
         <Route path="/blogs" element={<BlogsPage />} />
+        <Route path="/blogs/create" element={<BlogCreatePage />} />
+
         <Route path="/sign-up" element={<RegisterPage />} />
         <Route path="/sign-in" element={<LoginPage />} />
         <Route path="/profile" element={<ProfilePage />}>
