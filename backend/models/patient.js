@@ -16,6 +16,6 @@ const patientSchema = new Schema({
     ]
 });
 
-patientSchema.plugin(uniqueValidator);
+// patientSchema.plugin(uniqueValidator);
 
 module.exports = mongoose.model('Patient', patientSchema);
