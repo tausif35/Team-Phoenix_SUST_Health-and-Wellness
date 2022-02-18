@@ -12,6 +12,7 @@ const HttpError = require('./models/http-error');
 const patientRoutes = require('./routes/patient-routes');
 const doctorRoutes = require('./routes/doctor-routes');
 const qnaRoutes = require('./routes/qnaRoutes');
+const blogRoutes = require('./routes/blogRoutes');
 const generalRoutes = require('./routes/general-routes');
 
 const app = express();
@@ -25,6 +26,7 @@ app.use('/public/uploads', express.static(path.join('public', 'uploads')));
 app.use('/api/patients', patientRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api/QnA', qnaRoutes);
+app.use("/api/blogs", blogRoutes);
 app.use('/api', generalRoutes);
 app.use((req, res, next) => {
   const error = new HttpError("Could not find this route", 404);

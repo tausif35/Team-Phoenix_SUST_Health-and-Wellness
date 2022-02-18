@@ -14,10 +14,13 @@ const blogSchema = new mongoose.Schema(
       type: String,
       default: "Anonymous",
     },
-    photo: String,
-
-    category: {
+    photo: {
       type: String,
+      default: "public/uploads/defaultBlogImg.jpg"
+    },
+
+    blogCategory: {
+      type: String
     },
 
     doctorId: {
@@ -25,10 +28,7 @@ const blogSchema = new mongoose.Schema(
       ref: "Doctor",
       required: [true, "A blog must be posted from a doctor account"],
     },
-    approved: {
-      type: Boolean,
-      default: 0,
-    },
+    upvotes: [{ type: mongoose.Schema.ObjectId, ref: "Patient", required: true }],
   },
 
   {
@@ -37,14 +37,13 @@ const blogSchema = new mongoose.Schema(
   }
 );
 
-//virtual populate for comments
-blogSchema.virtual("comments", {
-  ref: "Comment",
-  foreignField: "_blogId",
-  localField: "_id",
-});
+// //virtual populate for comments
+// blogSchema.virtual("comments", {
+//   ref: "Comment",
+//   foreignField: "_blogId",
+//   localField: "_id",
+// });
 
 //Model Creation
-const BlogPost = mongoose.model("BlogPost", blogSchema);
+module.exports = mongoose.model('Blog', blogSchema);
 
-module.exports = BlogPost;
