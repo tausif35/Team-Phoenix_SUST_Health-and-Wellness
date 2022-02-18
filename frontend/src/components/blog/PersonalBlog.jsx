@@ -9,6 +9,7 @@ import { CardActionArea, Chip, Divider, Stack } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { getPersonalQuestions } from "../../actions/queAnsActions";
 import { useNavigate } from "react-router-dom";
+import { getPersonalBlogs } from "../../actions/blogActions";
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -53,16 +54,14 @@ function PersonalBlog() {
 
   const [expanded, setExpanded] = useState(true);
 
-  const { loading, error, questions } = useSelector(
-    (state) => state.personalQuestions
-  );
+  const { loading, error, blogs } = useSelector((state) => state.personalBlogs);
 
   useEffect(() => {
-    //dispatch(getPersonalQuestions());
+    //dispatch(getPersonalBlogs());
   }, [dispatch]);
 
   const handleItemClick = (item) => {
-    //navigate(`/q-a/${item.id}`);
+    navigate(`/blogs/${item.id}`);
   };
 
   return (
@@ -76,19 +75,19 @@ function PersonalBlog() {
         </AccordionSummary>
         <AccordionDetails>
           <Stack divider={<Divider />}>
-            {questions.map((item, index) => (
+            {blogs.map((item, index) => (
               <CardActionArea
                 key={index}
                 sx={{ p: 2 }}
                 onClick={() => handleItemClick(item)}
               >
                 <Typography variant="body1" fontWeight={"bold"}>
-                  {item.questionTitle}
+                  {item.blogTitle}
                 </Typography>
                 <Chip
                   variant="outlined"
                   color="primary"
-                  label={item.questionCategory}
+                  label={item.blogCategory}
                   sx={{ mt: 2 }}
                 />
               </CardActionArea>

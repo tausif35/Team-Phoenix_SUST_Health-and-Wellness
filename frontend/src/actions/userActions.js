@@ -42,7 +42,7 @@ export const login = (role, email, password) => async (dispatch) => {
 
     dispatch({
       type: USER_LOGIN_SUCCESS,
-      payload: res.data,
+      payload: { ...res.data, role },
     });
 
     saveToLocalStorage(res.data, role);
@@ -86,7 +86,7 @@ export const register = (role, registrationInfo) => async (dispatch) => {
 
     dispatch({
       type: USER_LOGIN_SUCCESS,
-      payload: res.data,
+      payload: { ...res.data, role },
     });
 
     saveToLocalStorage(res.data, role);

@@ -4,13 +4,18 @@ import {
   Button,
   IconButton,
   InputBase,
+  MenuItem,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { writeBlog } from "../actions/blogActions";
 import RichEditor from "../components/RichEditor";
+import { blogCategories } from "../utils/categoryList";
 
 const CoverPic = styled.img`
   width: 100%;
@@ -26,25 +31,56 @@ const Label = styled.label`
 `;
 
 function BlogCreatePage() {
+  const dispatch = useDispatch();
+
+  const navigate = useNavigate();
+
   const [valueMissing, setValueMissing] = useState(false);
-  const [editorValue, setEditorValue] = useState("");
+  const [blogBody, setBlogBody] = useState("");
   const [blogTitle, setBlogTitle] = useState("");
-  const [blogImage, setBlogImage] = useState(null);
+  const [blogCategory, setBlogCategory] = useState("");
+  const [image, setImage] = useState(null);
+
+  const { loading, error, success } = useSelector((state) => state.postBlog);
+
+  useEffect(() => {
+    if (success) {
+      setValueMissing(false);
+      navigate("/blogs");
+    }
+  }, [success]);
 
   const onEditorChange = (value) => {
-    setEditorValue(value);
-    console.log(value);
+    setBlogBody(value);
   };
 
   const onFileSelect = (e) => {
     if (e.target.files[0]) {
-      setBlogImage(e.target.files[0]);
+      setImage(e.target.files[0]);
     }
   };
 
   const handlePostClick = () => {
-    if (editorValue && editorValue !== "<p><br></p>" && blogTitle) {
-      console.log(editorValue);
+    if (blogTitle && blogCategory && blogBody && blogBody !== "<p><br></p>") {
+      const values = {
+        blogTitle,
+        blogCategory,
+        blogBody,
+      };
+
+      const formData = new FormData();
+
+      Object.keys(values).forEach((item) => {
+        formData.append([item], values[item]);
+      });
+
+      if (image) {
+        formData.append("image", image);
+      }
+
+      dispatch(writeBlog(formData));
+    } else {
+      setValueMissing(true);
     }
   };
 
@@ -62,8 +98,8 @@ function BlogCreatePage() {
         >
           <CoverPic
             src={
-              blogImage
-                ? URL.createObjectURL(blogImage)
+              image
+                ? URL.createObjectURL(image)
                 : "https://healthtechmagazine.net/sites/healthtechmagazine.net/files/styles/cdw_hero/public/articles/%5Bcdw_tech_site%3Afield_site_shortname%5D/202007/20200630_HT_Web_MonITor_Tech-Organizations-Should-Consider.jpg?"
             }
           />
@@ -72,7 +108,7 @@ function BlogCreatePage() {
             <InputBase
               id="contained-button-file"
               type={"file"}
-              name="profilePic"
+              name="image"
               accept=".png, .jpg, .jpeg"
               onChange={onFileSelect}
               sx={{ display: "none" }}
@@ -87,31 +123,50 @@ function BlogCreatePage() {
             </Button>
           </Label>
 
-          {blogImage && (
+          {image && (
             <IconButton
               color="error"
               sx={{ position: "absolute", top: "10px", right: "10px" }}
-              onClick={() => setBlogImage(null)}
+              onClick={() => setImage(null)}
             >
               <Delete />
             </IconButton>
           )}
         </Box>
 
-        <Stack spacing={1}>
-          <Typography variant="h6">Blog Title</Typography>
-
+        <Stack spacing={2} direction="row">
           <TextField
+            fullWidth
             variant="outlined"
-            placeholder="Give Title"
+            label="Blog Title"
             error={valueMissing && !blogTitle}
             helperText={
               valueMissing && !blogTitle ? "Please write your blog title" : ""
             }
             onChange={(e) => setBlogTitle(e.target.value)}
             defaultValue=""
-            inputProps={{ style: { fontSize: 20 } }}
           />
+
+          <TextField
+            fullWidth
+            variant="outlined"
+            label="Select Category"
+            select
+            error={valueMissing && !blogCategory}
+            helperText={
+              valueMissing && !blogCategory
+                ? "Please select your question category"
+                : ""
+            }
+            onChange={(e) => setBlogCategory(e.target.value)}
+            defaultValue=""
+          >
+            {blogCategories.map((option, index) => (
+              <MenuItem key={index} value={option}>
+                {option}
+              </MenuItem>
+            ))}
+          </TextField>
         </Stack>
         <RichEditor onEditorChange={onEditorChange} />
 

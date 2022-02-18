@@ -9,6 +9,7 @@ import { Button, Divider, MenuItem, Stack, TextField } from "@mui/material";
 import { questionCategories } from "../../utils/categoryList";
 import { useDispatch } from "react-redux";
 import { getQuestionList } from "../../actions/queAnsActions";
+import { getBlogList } from "../../actions/blogActions";
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -54,11 +55,11 @@ function BlogFilter() {
   const [sortBy, setSortBy] = useState("");
 
   useEffect(() => {
-    //dispatch(getQuestionList({ category, sortBy }));
+    dispatch(getBlogList({ category, sortBy }));
   }, []);
 
   const handleOnApply = () => {
-    //dispatch(getQuestionList({ category, sortBy }));
+    dispatch(getBlogList({ category, sortBy }));
   };
 
   const handleOnClear = () => {

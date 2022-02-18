@@ -8,20 +8,22 @@ import PersonalBlog from "../components/blog/PersonalBlog";
 
 function BlogsPage() {
   const navigate = useNavigate();
+
+  const { loading, error, blogs } = useSelector((state) => state.blogList);
+
   const { userInfo } = useSelector((state) => state.userLogin);
 
   const handleWriteBlogClick = () => {
     navigate("/blogs/create");
   };
 
-  const blogs = [];
   return (
     <Grid container spacing={4} p={4} columns={{ xs: 1, md: 9 }}>
       <Grid item xs={1} md={2}>
         <BlogFilter />
       </Grid>
       <Grid item xs={1} md={5} display="flex">
-        <Stack spacing={4} width={"100%"} alignItems={"center"}>
+        <Stack spacing={2} width={"100%"} alignItems={"center"}>
           {userInfo.role === "doctor" && (
             <Button
               variant="contained"
@@ -33,9 +35,13 @@ function BlogsPage() {
             </Button>
           )}
 
-          {blogs.map((item, index) => (
-            <BlogListItem key={index} item={item} />
-          ))}
+          <Grid container spacing={2} columns={{ xs: 1, md: 2 }}>
+            {blogs.map((item, index) => (
+              <Grid item xs={1} key={index}>
+                <BlogListItem item={item} />
+              </Grid>
+            ))}
+          </Grid>
         </Stack>
       </Grid>
       <Grid item xs={1} md={2}>
