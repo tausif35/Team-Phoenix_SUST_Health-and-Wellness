@@ -50,7 +50,9 @@ function DoctorSearchBar() {
           fullWidth
           options={specializationList}
           getOptionLabel={(option) => option}
-          onChange={(e, values) => setSpeciality(values)}
+          onChange={(e, values) => {
+            setSpeciality(values ? values : "");
+          }}
           renderInput={(params) => (
             <TextField {...params} variant="outlined" label="Specialization" />
           )}

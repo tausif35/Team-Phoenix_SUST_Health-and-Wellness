@@ -37,7 +37,7 @@ function FindDoctor() {
 
       {error && <Alert severity="error">{error}</Alert>}
 
-      <Grid container spacing={2} columns={{ xs: 1, sm: 3, md: 4, lg: 5 }}>
+      <Grid container spacing={2} columns={{ xs: 1, sm: 2, md: 3, lg: 5 }}>
         {doctors.map((item, index) => (
           <Grid item xs={1} key={index}>
             <DoctorItem item={item} onItemClick={onItemClick} />

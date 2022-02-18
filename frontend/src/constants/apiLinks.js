@@ -30,3 +30,5 @@ export const GET_DOCTOR_LIST = `${API_HOST}/api/doctors/find`;
 export const POST_QUESTION = `${API_HOST}/api/QnA/question`;
 
 export const GET_QUESTION_LIST = `${API_HOST}/api/QnA`;
+
+export const GET_SINGLE_QUESTION = `${API_HOST}/api/QnA/question`;

@@ -4,9 +4,11 @@ import MuiAccordion from "@mui/material/Accordion";
 import MuiAccordionSummary from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Divider, MenuItem, Stack, TextField } from "@mui/material";
 import { questionCategories } from "../../utils/categoryList";
+import { useDispatch } from "react-redux";
+import { getQuestionList } from "../../actions/queAnsActions";
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -27,7 +29,9 @@ const AccordionSummary = styled((props) => (
   />
 ))(({ theme }) => ({
   backgroundColor:
-    theme.palette.mode === "dark" ? "rgba(255, 255, 255, .05)" : "#0000007",
+    theme.palette.mode === "dark"
+      ? "rgba(255, 255, 255, .05)"
+      : "rgba(0, 0, 0, .03)",
   flexDirection: "row-reverse",
   "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
     transform: "rotate(90deg)",
@@ -43,13 +47,18 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 }));
 
 function QuestionFilter() {
+  const dispatch = useDispatch();
+
   const [expanded, setExpanded] = useState(true);
   const [category, setCategory] = useState("");
   const [sortBy, setSortBy] = useState("");
 
+  useEffect(() => {
+    dispatch(getQuestionList({ category, sortBy }));
+  }, []);
+
   const handleOnApply = () => {
-    console.log(category);
-    console.log(sortBy);
+    dispatch(getQuestionList({ category, sortBy }));
   };
 
   const handleOnClear = () => {

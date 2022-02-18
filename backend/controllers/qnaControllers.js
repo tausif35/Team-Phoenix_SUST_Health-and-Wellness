@@ -26,8 +26,6 @@ exports.getAllQuestion = async (req, res, next) => {
       },
     });
   } else {
-    console.log("category");
-
     try {
       const questions = await Question.find({
         questionCategory: category,

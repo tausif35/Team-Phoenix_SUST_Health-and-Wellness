@@ -9,6 +9,7 @@ import UpdatePassword from "./components/profile/UpdatePassword";
 import AppointmentPage from "./pages/AppointmentPage";
 import QueAnsPage from "./pages/QueAnsPage";
 import BlogsPage from "./pages/BlogsPage";
+import SingleQnAPage from "./pages/SingleQnAPage";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/appointments" element={<AppointmentPage />} />
         <Route path="/q-a" element={<QueAnsPage />} />
+        <Route path="/q-a/:questionId" element={<SingleQnAPage />} />
         <Route path="/blogs" element={<BlogsPage />} />
         <Route path="/sign-up" element={<RegisterPage />} />
         <Route path="/sign-in" element={<LoginPage />} />

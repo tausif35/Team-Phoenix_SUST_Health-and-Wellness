@@ -63,7 +63,7 @@ function QuestionField() {
   };
 
   return (
-    <Paper sx={{ width: "100%", maxWidth: "1000px" }}>
+    <Paper sx={{ width: "100%" }}>
       <Stack p={3} spacing={2}>
         <Typography variant="h5">Ask Questions</Typography>
 

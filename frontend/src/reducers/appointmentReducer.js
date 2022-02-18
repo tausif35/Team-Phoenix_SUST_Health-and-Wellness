@@ -11,7 +11,7 @@ export const doctorListReducer = (state = { doctors: [] }, action) => {
     case FIND_DOCTOR_SUCCESS:
       return { loading: false, doctors: action.payload };
     case FIND_DOCTOR_FAIL:
-      return { loading: false, error: action.payload };
+      return { loading: false, doctors: [], error: action.payload };
     default:
       return state;
   }
