@@ -8,7 +8,7 @@ const Logo = styled(Typography)`
   justify-content: center;
   gap: 4px;
   direction: row;
-  margin: 8px 0;
+  margin: 1.3em 0;
 `;
 
 function AppIcon(props) {

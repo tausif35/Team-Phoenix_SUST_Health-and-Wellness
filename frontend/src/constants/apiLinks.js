@@ -32,3 +32,5 @@ export const POST_QUESTION = `${API_HOST}/api/QnA/question`;
 export const GET_QUESTION_LIST = `${API_HOST}/api/QnA`;
 
 export const GET_SINGLE_QUESTION = `${API_HOST}/api/QnA/question`;
+
+export const POST_ANSWER = `${API_HOST}/api/QnA/answer`;

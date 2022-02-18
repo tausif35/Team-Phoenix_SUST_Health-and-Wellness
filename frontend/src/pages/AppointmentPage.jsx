@@ -30,7 +30,12 @@ function AppointmentPage() {
           value={tabValue}
           onChange={handleTabChange}
           centered
-          sx={{ borderBottom: 1, borderColor: "divider" }}
+          sx={{
+            borderBottom: 1,
+            borderTop: 1,
+            borderColor: "divider",
+            bgcolor: "#fff",
+          }}
         >
           <Tab label="Find Doctors" value="find-doctor" />
           <Tab label="Your Appointments" value="your-appointments" />

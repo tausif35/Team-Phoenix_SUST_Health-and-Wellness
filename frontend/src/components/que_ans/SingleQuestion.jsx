@@ -3,7 +3,7 @@ import React from "react";
 
 function SingleQuestion({ item }) {
   return (
-    <Paper sx={{ width: "100%", maxWidth: "600px" }}>
+    <Paper sx={{ width: "100%", maxWidth: "800px" }}>
       <Stack spacing={2} pb={2}>
         <Stack spacing={1} bgcolor="#f3f3f3" py={1} px={2}>
           <Typography variant="h6">

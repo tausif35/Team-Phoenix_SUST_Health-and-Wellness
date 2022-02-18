@@ -2,6 +2,7 @@ import axios from "axios";
 import {
   GET_QUESTION_LIST,
   GET_SINGLE_QUESTION,
+  POST_ANSWER,
   POST_QUESTION,
 } from "../constants/apiLinks";
 import {
@@ -11,6 +12,9 @@ import {
   GET_SINGLE_QUESTION_FAIL,
   GET_SINGLE_QUESTION_REQUEST,
   GET_SINGLE_QUESTION_SUCCESS,
+  POST_ANSWER_FAIL,
+  POST_ANSWER_REQUEST,
+  POST_ANSWER_SUCCESS,
   POST_QUESTION_FAIL,
   POST_QUESTION_REQUEST,
   POST_QUESTION_SUCCESS,
@@ -130,3 +134,45 @@ export const getSingleQuestion = (id) => async (dispatch, getState) => {
     });
   }
 };
+
+export const postAnswer =
+  (questionId, answer) => async (dispatch, getState) => {
+    try {
+      dispatch({ type: POST_ANSWER_REQUEST });
+
+      const {
+        userLogin: { userInfo },
+      } = getState();
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      const res = await axios.post(
+        `${POST_ANSWER}/${questionId}`,
+        { answer },
+        config
+      );
+
+      dispatch({
+        type: POST_ANSWER_SUCCESS,
+        payload: res.data,
+      });
+
+      // dispatch({
+      //   type: GET_QUESTIONS_SUCCESS,
+      //   payload: [...questions, res.data.data.newQuestion],
+      // });
+    } catch (error) {
+      dispatch({
+        type: POST_ANSWER_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      });
+    }
+  };

@@ -46,7 +46,7 @@ function FindDoctor() {
       </Grid>
 
       <Drawer anchor={"right"} open={drawerOpen} onClose={toggleDrawer(false)}>
-        <Box p={5} role="presentation" sx={{ width: "60vw" }}>
+        <Box p={5} role="presentation" sx={{ width: "40vw" }}>
           <SetAppointment selectedDoctor={selectedDoctor} />
         </Box>
       </Drawer>

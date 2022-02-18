@@ -6,6 +6,7 @@ import {
   askQuestionReducer,
   questionListReducer,
   singleQuestionReducer,
+  writeAnswerReducer,
 } from "./reducers/queAnsReducer";
 import { socketConnectionReducer } from "./reducers/socketReducer";
 import {
@@ -26,6 +27,7 @@ const reducer = combineReducers({
   askQuestion: askQuestionReducer,
   questionList: questionListReducer,
   singleQuestion: singleQuestionReducer,
+  writeAnswer: writeAnswerReducer,
   socketConnection: socketConnectionReducer,
 });
 
