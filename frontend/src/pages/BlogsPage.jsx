@@ -1,4 +1,4 @@
-import { Button, Grid, Stack } from "@mui/material";
+import { Alert, Button, Grid, LinearProgress, Stack } from "@mui/material";
 import React from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -35,9 +35,17 @@ function BlogsPage() {
             </Button>
           )}
 
-          <Grid container spacing={2} columns={{ xs: 1, md: 2 }}>
+          {loading && <LinearProgress sx={{ width: "100%" }} />}
+
+          {error && (
+            <Alert severity="error" sx={{ width: "100%" }}>
+              {error}
+            </Alert>
+          )}
+
+          <Grid container columns={{ xs: 1, md: 2 }}>
             {blogs.map((item, index) => (
-              <Grid item xs={1} key={index}>
+              <Grid item xs={1} key={index} p={1}>
                 <BlogListItem item={item} />
               </Grid>
             ))}

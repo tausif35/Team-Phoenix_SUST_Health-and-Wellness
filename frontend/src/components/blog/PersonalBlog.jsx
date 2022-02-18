@@ -57,7 +57,7 @@ function PersonalBlog() {
   const { loading, error, blogs } = useSelector((state) => state.personalBlogs);
 
   useEffect(() => {
-    //dispatch(getPersonalBlogs());
+    dispatch(getPersonalBlogs());
   }, [dispatch]);
 
   const handleItemClick = (item) => {

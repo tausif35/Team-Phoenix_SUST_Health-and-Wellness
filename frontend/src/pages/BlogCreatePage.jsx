@@ -1,9 +1,11 @@
 import styled from "@emotion/styled";
 import { Close, Delete } from "@mui/icons-material";
 import {
+  Alert,
   Button,
   IconButton,
   InputBase,
+  LinearProgress,
   MenuItem,
   Stack,
   TextField,
@@ -46,9 +48,10 @@ function BlogCreatePage() {
   useEffect(() => {
     if (success) {
       setValueMissing(false);
+
       navigate("/blogs");
     }
-  }, [success]);
+  }, [navigate, success]);
 
   const onEditorChange = (value) => {
     setBlogBody(value);
@@ -173,6 +176,10 @@ function BlogCreatePage() {
         <Button variant="contained" size="large" onClick={handlePostClick}>
           Post your blog
         </Button>
+
+        {loading && <LinearProgress />}
+
+        {error && <Alert severity="error">{error}</Alert>}
       </Stack>
     </Stack>
   );

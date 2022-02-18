@@ -7,11 +7,18 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { API_HOST } from "../../constants/apiLinks";
 
-function BlogListItem({ item, onItemClick }) {
+function BlogListItem({ item }) {
+  const navigate = useNavigate();
+
+  const onItemClick = () => {
+    navigate(`/blogs/${item.id}`);
+  };
+
   return (
-    <Card onClick={() => onItemClick(item)}>
+    <Card onClick={onItemClick}>
       <CardActionArea>
         <CardMedia
           component="img"
