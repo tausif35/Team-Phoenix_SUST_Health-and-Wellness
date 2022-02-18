@@ -141,11 +141,7 @@ exports.getQuestionsOfAnUser = async (req, res, next) => {
   let id = req.params.id;
 
   try {
-    if (req.userData.type === "patient") {
-      user = await (await Patient.findById(id)).populate("questions");
-    } else {
-      user = await Doctor.findById(id).populate("questions");
-    }
+    user = await Patient.findById(id).populate("questions");
   } catch (error) {
     console.log(error.message);
   }

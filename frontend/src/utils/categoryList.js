@@ -26,4 +26,4 @@ export const specializationList = [
 
 export const genders = ["Male", "Female", "Other"];
 
-export const questionCategories = ["A", "B", "C"];
+export const questionCategories = ["Diet", "Fitness", "Health", "Vaccine"];

@@ -46,7 +46,7 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   borderTop: "1px solid rgba(0, 0, 0, .125)",
 }));
 
-function PersonalQuestion() {
+function PersonalBlog() {
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
@@ -58,11 +58,11 @@ function PersonalQuestion() {
   );
 
   useEffect(() => {
-    dispatch(getPersonalQuestions());
+    //dispatch(getPersonalQuestions());
   }, [dispatch]);
 
   const handleItemClick = (item) => {
-    navigate(`/q-a/${item.id}`);
+    //navigate(`/q-a/${item.id}`);
   };
 
   return (
@@ -72,7 +72,7 @@ function PersonalQuestion() {
         onChange={(e, newExpanded) => setExpanded(newExpanded)}
       >
         <AccordionSummary>
-          <Typography>Your Questions</Typography>
+          <Typography>Your Blogs</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Stack divider={<Divider />}>
@@ -100,4 +100,4 @@ function PersonalQuestion() {
   );
 }
 
-export default PersonalQuestion;
+export default PersonalBlog;

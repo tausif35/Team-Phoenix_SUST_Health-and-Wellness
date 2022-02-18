@@ -2,7 +2,7 @@ import { ArrowForwardIos } from "@mui/icons-material";
 import { Card, CardActionArea, Chip, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-function QuestionList({ item }) {
+function QuestionListItem({ item }) {
   const navigate = useNavigate();
 
   const onItemClick = () => {
@@ -57,4 +57,4 @@ function QuestionList({ item }) {
   );
 }
 
-export default QuestionList;
+export default QuestionListItem;

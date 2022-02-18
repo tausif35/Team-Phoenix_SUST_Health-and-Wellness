@@ -1,4 +1,5 @@
 import { Chip, Divider, Paper, Stack, Typography } from "@mui/material";
+import { Box } from "@mui/system";
 import React from "react";
 
 function SingleQuestion({ item }) {
@@ -9,15 +10,18 @@ function SingleQuestion({ item }) {
           <Typography variant="h6">
             {item.askedBy ? item.askedBy : "Anonymous"}
           </Typography>
-          <Typography variant="body1">
-            {"Date and Time"}
+          <Stack
+            direction={"row"}
+            alignItems="center"
+            justifyContent={"space-between"}
+          >
             <Chip
               variant="outlined"
               color="primary"
               label={item.questionCategory}
-              sx={{ ml: 4 }}
             />
-          </Typography>
+            <Typography variant="body1">{"Date and Time"}</Typography>
+          </Stack>
         </Stack>
         <Typography variant="h4" fontWeight={"bold"} px={2}>
           {item.questionTitle}
