@@ -381,14 +381,16 @@ exports.getDoctor = async (req, res, next) => {
 exports.getAllAppointments = async (req, res, next) => {
     const doctorId = req.params.id ? req.params.id : req.userData.id;
     let doctor;
+    let detailedAppointmentStat;
     try {
-        doctor = await Doctor.findById(req.userData.id).populate('appointments');
+        doctor = await Doctor.findById(doctorId).populate('appointments');
+        detailedAppointmentStat = await doctor.appointments.map(appointment => {
+            appointment.toObject({ getters: true })
+        });
     } catch (error) {
         next(new HttpError("Something went wrong, could not get appointments.", 500));
     }
-    const detailedAppointmentStat = await doctor.appointments.map(appointment => {
-        appointment.toObject({ getters: true })
-    });
+    
     res.status(200).json({
         data: {
             doctor: doctor.toObject({ getters: true }),

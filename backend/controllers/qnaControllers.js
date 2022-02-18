@@ -141,11 +141,7 @@ exports.getQuestionsOfAnUser = async (req, res, next) => {
   let id = req.params.id;
 
   try {
-    if (req.userData.type === "patient") {
-      user = await (await Patient.findById(id)).populate("questions");
-    } else {
-      user = await Doctor.findById(id).populate("questions");
-    }
+      user = await Patient.findById(id).populate("questions");
   } catch (error) {
     console.log(error.message);
   }
@@ -208,8 +204,15 @@ exports.answerQuestion = async (req, res, next) => {
 exports.upvoteAnswer = async (req, res, next) => {
   const ansId = req.params.id;
   const id = req.userData.id;
-  const answer = await Answer.findById(ansId);
-  const isUpvoted = answer.upvotes && answer.upvotes.includes(id);
+  console.log(ansId);
+  let answer;
+  try{
+       answer = await Answer.findById(ansId);
+
+  }catch(err){
+      console.log(err.message);
+  }
+  const isUpvoted = answer.upvotes.length && answer.upvotes.includes(id);
 
   let option;
   if (!isUpvoted) {
