@@ -1,4 +1,5 @@
 // imports
+<<<<<<< HEAD
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -14,6 +15,23 @@ const doctorRoutes = require("./routes/doctor-routes");
 const appointmentRoutes = require("./routes/appointment-routes");
 const qnaRoutes = require("./routes/qnaRoutes");
 const generalRoutes = require("./routes/general-routes");
+=======
+const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const path = require('path');
+const fs = require('fs');
+
+require('dotenv').config();
+
+const HttpError = require('./models/http-error');
+const patientRoutes = require('./routes/patient-routes');
+const doctorRoutes = require('./routes/doctor-routes');
+const qnaRoutes = require('./routes/qnaRoutes');
+const blogRoutes = require('./routes/blogRoutes');
+const generalRoutes = require('./routes/general-routes');
+>>>>>>> feature/blog
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -26,6 +44,7 @@ app.use("/public/uploads", express.static(path.join("public", "uploads")));
 app.use("/api/patients", patientRoutes);
 app.use("/api/doctors", doctorRoutes);
 app.use("/api/appointments", appointmentRoutes);
+app.use("/api/blogs", blogRoutes);
 app.use("/api/QnA", qnaRoutes);
 app.use("/api", generalRoutes);
 app.use((req, res, next) => {
