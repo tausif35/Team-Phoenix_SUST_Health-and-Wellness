@@ -34,15 +34,13 @@ function QuestionListItem({ item }) {
           </Typography>
 
           <Typography variant="body2" color={"text.secondary"}>
-            — {item.askedBy ? item.askedBy : "Anonymous"}
+            — {item.askedBy ? item.askedBy : "Anonymous"} at Date and Time
           </Typography>
 
           <Typography variant="body2" color={"text.secondary"}>
             {item._answersId.length} Answers
           </Typography>
         </Stack>
-
-        <Typography variant="subtitle1">{"Date&Time"}</Typography>
 
         <Stack spacing={3} direction={"row"}>
           <Chip
