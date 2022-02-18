@@ -154,12 +154,13 @@ exports.answerQuestion = async (req, res, next) => {
   if (req.userData.type === "Patient") {
     return next(new AppError("Unauthorized", 400));
   }
-  const Doctor = await Doctor.findById(req.userData.id);
+  const doctor = await Doctor.findById(req.userData.id);
 
   const newAnswer = await Answer.create({
-    _askerId: req.params.id,
+    _questionId: req.params.id,
     answer: req.body.answer,
-    answeredBy: Doctor.fullname,
+    answeredBy: doctor.id,
+    upvotes: []
   });
 
   res.status(201).json({

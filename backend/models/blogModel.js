@@ -2,33 +2,28 @@ const mongoose = require("mongoose");
 
 const blogSchema = new mongoose.Schema(
   {
-    title: {
+    blogTitle: {
       type: String,
       required: [true, "Please provide a Title"],
     },
-    body: {
+    blogBody: {
       type: String,
       required: [true, "Please provide a blog body"],
     },
-    name: {
+    authorName: {
       type: String,
       default: "Anonymous",
     },
     photo: String,
 
     category: {
-      type: [String],
+      type: String,
     },
-    role: String,
-    _userId: {
+
+    doctorId: {
       type: mongoose.Schema.ObjectId,
-      ref: "Consumer",
-      required: [true, "A question must have an user"],
-    },
-    _userId: {
-      type: mongoose.Schema.ObjectId,
-      ref: "Professional",
-      required: [true, "A question must have an user"],
+      ref: "Doctor",
+      required: [true, "A blog must be posted from a doctor account"],
     },
     approved: {
       type: Boolean,

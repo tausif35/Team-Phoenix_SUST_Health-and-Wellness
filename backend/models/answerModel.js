@@ -10,7 +10,8 @@ const answerSchema = new mongoose.Schema({
     required: true,
   },
   answeredBy: {
-    type: String,
+    type: mongoose.Schema.ObjectId,
+    ref: "Doctor"
   },
   upvotes: [{ type: mongoose.Schema.ObjectId, ref: "Patient" }],
 });
