@@ -1,19 +1,21 @@
 // imports
-const express = require("express");
-const bodyParser = require("body-parser");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const path = require("path");
 const fs = require("fs");
+const path = require("path");
+const cors = require("cors");
+const express = require("express");
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const HttpError = require("./models/http-error");
+const qnaRoutes = require("./routes/qnaRoutes");
+const blogRoutes = require('./routes/blogRoutes');
+const doctorRoutes = require("./routes/doctor-routes");
+const patientRoutes = require("./routes/patient-routes");
+const generalRoutes = require("./routes/general-routes");
+const appointmentRoutes = require("./routes/appointment-routes");
 
 require("dotenv").config();
 
-const HttpError = require("./models/http-error");
-const patientRoutes = require("./routes/patient-routes");
-const doctorRoutes = require("./routes/doctor-routes");
-const appointmentRoutes = require("./routes/appointment-routes");
-const qnaRoutes = require("./routes/qnaRoutes");
-const generalRoutes = require("./routes/general-routes");
+
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -26,8 +28,10 @@ app.use("/public/uploads", express.static(path.join("public", "uploads")));
 app.use("/api/patients", patientRoutes);
 app.use("/api/doctors", doctorRoutes);
 app.use("/api/appointments", appointmentRoutes);
+app.use("/api/blogs", blogRoutes);
 app.use("/api/QnA", qnaRoutes);
 app.use("/api", generalRoutes);
+
 app.use((req, res, next) => {
   const error = new HttpError("Could not find this route", 404);
   next(error);
