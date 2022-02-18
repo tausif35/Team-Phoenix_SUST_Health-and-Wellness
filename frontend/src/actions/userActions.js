@@ -68,16 +68,6 @@ export const register = (role, registrationInfo) => async (dispatch) => {
   try {
     dispatch({ type: USER_REGISTER_REQUEST });
 
-    const formData = new FormData();
-
-    Object.keys(registrationInfo).forEach((item) => {
-      formData.append([item], registrationInfo[item]);
-    });
-
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ", " + pair[1]);
-    }
-
     const config = {
       headers: {
         "Content-type": "multipart/form-data",
@@ -87,7 +77,7 @@ export const register = (role, registrationInfo) => async (dispatch) => {
     const reqLink =
       role === "doctor" ? POST_DOCTOR_REGISTER : POST_USER_REGISTER;
 
-    const res = await axios.post(reqLink, formData, config);
+    const res = await axios.post(reqLink, registrationInfo, config);
 
     dispatch({
       type: USER_REGISTER_SUCCESS,

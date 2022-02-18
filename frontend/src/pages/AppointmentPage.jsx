@@ -35,6 +35,7 @@ function AppointmentPage() {
           <Tab label="Find Doctors" value="find-doctor" />
           <Tab label="Your Appointments" value="your-appointments" />
         </Tabs>
+
         <TabPanel value={"find-doctor"} sx={{ p: 0 }}>
           <FindDoctor />
         </TabPanel>

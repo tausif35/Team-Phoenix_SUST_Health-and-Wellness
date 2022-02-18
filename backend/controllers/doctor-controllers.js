@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 
 const HttpError = require('../models/http-error');
 const Doctor = require('../models/doctor');
-const doctor = require('../models/doctor');
 
 
 exports.signup = async (req, res, next) => {
@@ -53,17 +52,13 @@ exports.signup = async (req, res, next) => {
         );
     }
 
+
     let hashedPassword;
     try {
         hashedPassword = await bcrypt.hash(password, 12);
     } catch (error) {
         console.log(error.message);
-        return next(
-            new HttpError(
-                'Could not create user, please try again',
-                500
-            )
-        );
+        return next(new HttpError("Could not create user, please try again", 500));
     }
 
     const createdDoctor = new Doctor({
@@ -79,20 +74,14 @@ exports.signup = async (req, res, next) => {
         specializations: JSON.parse(specializations),
         qualifications: JSON.parse(qualifications),
         workplaces: JSON.parse(workplaces),
-        appointments: []
+        appointments: [],
     });
     try {
         await createdDoctor.save();
     } catch (error) {
         console.log(error.message);
-        return next(
-            new HttpError(
-                'Signup failed, please try again later',
-                500
-            )
-        );
+        return next(new HttpError("Signup failed, please try again later", 500));
     }
-
 
     let token;
     try {
@@ -100,28 +89,23 @@ exports.signup = async (req, res, next) => {
             {
                 id: createdDoctor.id,
                 email: createdDoctor.email,
-                type: "doctor"
+                type: "doctor",
             },
             process.env.JWT_KEY,
             {
-                expiresIn: '2h'
+                expiresIn: "2h",
             }
         );
     } catch (error) {
         console.log(error.message);
-        return next(
-            new HttpError(
-                'Signup failed, please try again later',
-                500
-            )
-        );
+        return next(new HttpError("Signup failed, please try again later", 500));
     }
 
     res.status(201).json({
         id: createdDoctor.id,
         name: createdDoctor.name,
         email: createdDoctor.email,
-        token: token
+        token: token,
     });
 };
 
@@ -133,18 +117,12 @@ exports.login = async (req, res, next) => {
         existingDoctor = await Doctor.findOne({ email: email });
     } catch (error) {
         return next(
-            new HttpError(
-                "Logging in failed, please try again later.",
-                500
-            )
+            new HttpError("Logging in failed, please try again later.", 500)
         );
     }
     if (!existingDoctor) {
         return next(
-            new HttpError(
-                "Invalid credentials, could not log you in.",
-                401
-            )
+            new HttpError("Invalid credentials, could not log you in.", 401)
         );
     }
 
@@ -152,22 +130,13 @@ exports.login = async (req, res, next) => {
     try {
         isValidPassword = await bcrypt.compare(password, existingDoctor.password);
     } catch (error) {
-        return next(
-            new HttpError(
-                "Could not log you in.Please try again",
-                401
-            )
-        );
+        return next(new HttpError("Could not log you in.Please try again", 401));
     }
     if (!isValidPassword) {
         return next(
-            new HttpError(
-                "Invalid credentials, could not log you in.",
-                401
-            )
+            new HttpError("Invalid credentials, could not log you in.", 401)
         );
     }
-
 
     let token;
     try {
@@ -175,20 +144,17 @@ exports.login = async (req, res, next) => {
             {
                 id: existingDoctor.id,
                 email: existingDoctor.email,
-                type: "doctor"
+                type: "doctor",
             },
             process.env.JWT_KEY,
             {
-                expiresIn: '2h'
+                expiresIn: "2h",
             }
         );
     } catch (error) {
         console.log(error.message);
         return next(
-            new HttpError(
-                "Logging in failed, please try again later.",
-                500
-            )
+            new HttpError("Logging in failed, please try again later.", 500)
         );
     }
 
@@ -196,7 +162,7 @@ exports.login = async (req, res, next) => {
         id: existingDoctor.id,
         email: existingDoctor.email,
         name: existingDoctor.name,
-        token: token
+        token: token,
     });
 };
 
@@ -211,13 +177,8 @@ exports.editInfo = async (req, res, next) => {
     }
 
     const doctorId = req.params.doctorId;
-    const {
-        phoneNo,
-        password,
-        specializations,
-        qualifications,
-        workplaces,
-    } = req.body;
+    const { phoneNo, password, specializations, qualifications, workplaces } =
+        req.body;
 
     let updatedDoctor;
     try {
@@ -286,23 +247,15 @@ exports.changePassword = async (req, res, next) => {
             )
         );
     }
-
     const doctorId = req.params.doctorId;
-    const {
-        oldPassword,
-        newPassword,
-    } = req.body;
+    const { oldPassword, newPassword } = req.body;
 
     let updatedDoctor;
     try {
         updatedDoctor = await Doctor.findById(doctorId);
-    }
-    catch (error) {
+    } catch (error) {
         return next(
-            new HttpError(
-                "Something went wrong, could not update password.",
-                500
-            )
+            new HttpError("Something went wrong, could not update password.", 500)
         );
     }
 
@@ -348,10 +301,7 @@ exports.changePassword = async (req, res, next) => {
     } catch (error) {
         console.log(error.message);
         return next(
-            new HttpError(
-                "Something went wrong, could not update password.",
-                500
-            )
+            new HttpError("Something went wrong, could not update password.", 500)
         );
     }
 
@@ -361,10 +311,7 @@ exports.changePassword = async (req, res, next) => {
     } catch (error) {
         console.log(error);
         return next(
-            new HttpError(
-                "Something went wrong, could not update password.",
-                500
-            )
+            new HttpError("Something went wrong, could not update password.", 500)
         );
     }
     res.status(200).json({ doctor: updatedDoctor.toObject({ getters: true }) });
@@ -393,13 +340,13 @@ exports.getDoctors = async (req, res, next) => {
     }
     let filteredDoctors;
     if (doctorName && speciality) {
-        filteredDoctors = doctors.filter(doctor => doctor.name.toLowerCase().includes(doctorName.toLowerCase()) 
-        && doctor.specializations.some(s => s.toLowerCase().includes(speciality.toLowerCase())))
-    }else if (doctorName) {
+        filteredDoctors = doctors.filter(doctor => doctor.name.toLowerCase().includes(doctorName.toLowerCase())
+            && doctor.specializations.some(s => s.toLowerCase().includes(speciality.toLowerCase())))
+    } else if (doctorName) {
         filteredDoctors = doctors.filter(doctor => doctor.name.toLowerCase().includes(doctorName.toLowerCase()))
-    }else if (speciality) {
+    } else if (speciality) {
         filteredDoctors = doctors.filter(doctor => doctor.specializations.some(s => s.toLowerCase().includes(speciality.toLowerCase())))
-    }else{
+    } else {
         filteredDoctors = doctors;
     }
     res.status(200).json({ doctors: filteredDoctors.map(doctor => doctor.toObject({ getters: true })) });
@@ -428,8 +375,9 @@ exports.getDoctor = async (req, res, next) => {
     }
     res.status(200).json({ doctor: doctor.toObject({ getters: true }) });
 };
-exports.getAllAppointments = async (req, res, next)=>{
-    const doctorId = req.params.id? req.params.id: req.userData.id;
+
+exports.getAllAppointments = async (req, res, next) => {
+    const doctorId = req.params.id ? req.params.id : req.userData.id;
     let doctor;
     try {
         doctor = await Doctor.findById(req.userData.id).populate('appointments');
@@ -437,16 +385,13 @@ exports.getAllAppointments = async (req, res, next)=>{
         next(new HttpError("Something went wrong, could not get appointments.", 500));
     }
     const detailedAppointmentStat = await doctor.appointments.map(appointment => {
-        appointment.toObject({getters: true})});
-    res.status(200).json({ 
-        data:{
+        appointment.toObject({ getters: true })
+    });
+    res.status(200).json({
+        data: {
             doctor: doctor.toObject({ getters: true }),
             detailedAppointmentStat
-        } 
+        }
     });
 }
 
-// exports.signup = signup;
-// exports.login = login;
-// exports.editInfo = editInfo;
-// exports.changePassword = changePassword;

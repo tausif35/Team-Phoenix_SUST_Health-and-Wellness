@@ -1,37 +1,43 @@
 import axios from "axios";
-import { API_HOST } from "../../../../E-commerce/front-end/src/constants/apiLinks";
+import { GET_DOCTOR_LIST } from "../constants/apiLinks";
 import {
   FIND_DOCTOR_FAIL,
   FIND_DOCTOR_REQUEST,
   FIND_DOCTOR_SUCCESS,
 } from "../constants/appointmentConstants";
 
-export const doctorList = (doctorName, specialty) => async (dispatch) => {
-  try {
-    dispatch({ type: FIND_DOCTOR_REQUEST });
+export const doctorList =
+  (doctorName, speciality) => async (dispatch, getState) => {
+    try {
+      dispatch({ type: FIND_DOCTOR_REQUEST });
 
-    const res = [
-      {
-        _id: "1sd12",
-        name: "One",
-        email: "2@example",
-        phone: "0121211211",
-        specializations: ["A", "B", "C"],
-        qualifications: ["A", "B", "C"],
-      },
-    ];
+      const {
+        userLogin: { userInfo },
+      } = getState();
 
-    dispatch({
-      type: FIND_DOCTOR_SUCCESS,
-      payload: res.data,
-    });
-  } catch (error) {
-    dispatch({
-      type: FIND_DOCTOR_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message,
-    });
-  }
-};
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      const res = await axios.get(
+        `${GET_DOCTOR_LIST}/?doctorName=${doctorName}&speciality=${speciality}`,
+        config
+      );
+
+      dispatch({
+        type: FIND_DOCTOR_SUCCESS,
+        payload: res.data.doctors,
+      });
+    } catch (error) {
+      dispatch({
+        type: FIND_DOCTOR_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      });
+    }
+  };

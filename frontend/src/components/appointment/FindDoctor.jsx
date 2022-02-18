@@ -1,67 +1,55 @@
+import { Alert, Box, Drawer, Grid, LinearProgress, Stack } from "@mui/material";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 
-import { SearchOutlined } from "@mui/icons-material";
-import {
-  Autocomplete,
-  Button,
-  Paper,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
-import React, { useState } from "react";
-
-const specializationList = ["A", "B", "C"];
+import DoctorItem from "./DoctorItem";
+import DoctorSearchBar from "./DoctorSearchBar";
+import SetAppointment from "./SetAppointment";
 
 function FindDoctor() {
-  const [doctorName, setDoctorName] = useState("");
-  const [specialty, setSpecialty] = useState("");
+  const [selectedDoctor, setSelectedDoctor] = useState({});
 
-  const handleSearchClick = () => {
-    console.log(doctorName, specialty);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const toggleDrawer = (open) => (event) => {
+    if (
+      !(
+        event.type === "keydown" &&
+        (event.key === "Tab" || event.key === "Shift")
+      )
+    ) {
+      setDrawerOpen(open);
+    }
+  };
+
+  const { loading, error, doctors } = useSelector((state) => state.doctorList);
+
+  const onItemClick = (doctor) => {
+    setSelectedDoctor(doctor);
+    setDrawerOpen(true);
   };
 
   return (
-    <Stack spacing={4} alignItems="center" px={4}>
-      <Paper sx={{ width: "100%", maxWidth: "1000px" }}>
-        <Stack
-          direction={{ xs: "column", md: "row" }}
-          spacing={2}
-          p={2}
-          justifyContent="center"
-          alignItems="center"
-        >
-          <Typography variant="h6">Search</Typography>
+    <Stack spacing={4} px={4}>
+      <DoctorSearchBar />
 
-          <TextField
-            fullWidth
-            variant="outlined"
-            label="Doctor's Name"
-            type={"text"}
-            value={doctorName}
-            onChange={(e) => setDoctorName(e.target.value)}
-          />
+      {loading && <LinearProgress />}
 
-          <Autocomplete
-            fullWidth
-            options={specializationList}
-            getOptionLabel={(option) => option}
-            onChange={(e, values) => setSpecialty(values)}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                variant="outlined"
-                label="Specialization"
-              />
-            )}
-          />
+      {error && <Alert severity="error">{error}</Alert>}
 
-          <Button fullWidth variant="contained" onClick={handleSearchClick}>
-            Search
-            <SearchOutlined sx={{ ml: 2 }} />
-          </Button>
+      <Grid container spacing={2} columns={{ xs: 1, sm: 3, md: 4, lg: 5 }}>
+        {doctors.map((item, index) => (
+          <Grid item xs={1} key={index}>
+            <DoctorItem item={item} onItemClick={onItemClick} />
+          </Grid>
+        ))}
+      </Grid>
 
-        </Stack>
-      </Paper>
+      <Drawer anchor={"right"} open={drawerOpen} onClose={toggleDrawer(false)}>
+        <Box p={5} role="presentation" sx={{ width: "60vw" }}>
+          <SetAppointment selectedDoctor={selectedDoctor} />
+        </Box>
+      </Drawer>
     </Stack>
   );
 }
