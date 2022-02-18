@@ -93,14 +93,14 @@ exports.signup = async (req, res, next) => {
             },
             process.env.JWT_KEY,
             {
-                expiresIn: "2h",
+                expiresIn: "6d",
             }
         );
     } catch (error) {
         console.log(error.message);
         return next(new HttpError("Signup failed, please try again later", 500));
     }
-
+    console.log({token : token});
     res.status(201).json({
         id: createdDoctor.id,
         name: createdDoctor.name,
@@ -148,7 +148,7 @@ exports.login = async (req, res, next) => {
             },
             process.env.JWT_KEY,
             {
-                expiresIn: "2h",
+                expiresIn: "6d",
             }
         );
     } catch (error) {
@@ -157,6 +157,7 @@ exports.login = async (req, res, next) => {
             new HttpError("Logging in failed, please try again later.", 500)
         );
     }
+    console.log({token : token});
 
     res.status(201).json({
         id: existingDoctor.id,

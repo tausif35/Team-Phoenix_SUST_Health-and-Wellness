@@ -4,8 +4,8 @@ const jwt = require('jsonwebtoken');
 
 const HttpError = require('../models/http-error');
 const Patient = require('../models/patient');
-const Doctor = require('../models/doctor');
-const Appointment = require('../models/appointment');
+// const Doctor = require('../models/doctor');
+// const Appointment = require('../models/appointment');
 
 exports.signup = async (req, res, next) => {
     const error = validationResult(req);
@@ -94,14 +94,14 @@ exports.signup = async (req, res, next) => {
       },
       process.env.JWT_KEY,
       {
-        expiresIn: "2h",
+        expiresIn: "6d",
       }
     );
   } catch (error) {
     console.log(error.message);
     return next(new HttpError("Signup failed, please try again later", 500));
   }
-
+  console.log({token : token});
   res.status(201).json({
     id: createdPatient.id,
     name: createdPatient.name,
@@ -149,7 +149,7 @@ exports.login = async (req, res, next) => {
       },
       process.env.JWT_KEY,
       {
-        expiresIn: "2h",
+        expiresIn: "6d",
       }
     );
   } catch (error) {
@@ -158,7 +158,7 @@ exports.login = async (req, res, next) => {
       new HttpError("Logging in failed, please try again later.", 500)
     );
   }
-
+  console.log({token : token});
   res.status(201).json({
     id: existingPatient.id,
     email: existingPatient.email,
