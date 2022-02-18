@@ -75,6 +75,7 @@ exports.signup = async (req, res, next) => {
         qualifications: JSON.parse(qualifications),
         workplaces: JSON.parse(workplaces),
         appointments: [],
+        blogs: []
     });
     try {
         await createdDoctor.save();

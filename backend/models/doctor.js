@@ -25,9 +25,12 @@ const doctorSchema = new Schema({
     ],
     appointments: [
         { type: mongoose.Types.ObjectId, required: true, ref: 'Appointment' }
+    ],
+    blogs: [
+        { type: mongoose.Types.ObjectId, required: true, ref: 'Blog' }
     ]
 });
 
-//doctorSchema.plugin(uniqueValidator);
+// doctorSchema.plugin(uniqueValidator);
 
 module.exports = mongoose.model('Doctor', doctorSchema);
