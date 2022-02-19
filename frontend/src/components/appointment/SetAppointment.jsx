@@ -16,21 +16,27 @@ import React, { useEffect, useState } from "react";
 import {
   API_HOST,
   GET_DOCTOR_AVAILABLE_APPOINTMENTS,
+  POST_APPOINTMENTS,
 } from "../../constants/apiLinks";
 import { LocalizationProvider, StaticDatePicker } from "@mui/lab";
-
 import AdapterMoment from "@mui/lab/AdapterMoment";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import moment from "moment";
+import { useDispatch } from "react-redux";
+import { getUserDetails } from "../../actions/userActions";
 
 function SetAppointment({ selectedDoctor }) {
+  const dispatch = useDispatch();
+
   const [valueMissing, setValueMissing] = useState(false);
   const [openAppointment, setOpenAppointment] = useState(false);
   const [appointmentDate, setAppointmentDate] = useState("");
   const [appointmentTime, setAppointmentTime] = useState("");
   const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
-  const { loading, error, userInfo } = useSelector((state) => state.userLogin);
+
+  const { userInfo } = useSelector((state) => state.userLogin);
+  const { loading, user } = useSelector((state) => state.userDetails);
 
   const config = {
     headers: {
@@ -38,6 +44,10 @@ function SetAppointment({ selectedDoctor }) {
       Authorization: `Bearer ${userInfo.token}`,
     },
   };
+
+  useEffect(() => {
+    dispatch(getUserDetails());
+  }, []);
 
   const handleDialogClose = () => {
     setAppointmentDate("");
@@ -71,12 +81,35 @@ function SetAppointment({ selectedDoctor }) {
     setAppointmentDate(newValue);
   };
 
-  const handleSetAppointment = () => {
+  const handleSetAppointment = async () => {
     if (appointmentDate && appointmentTime) {
       console.log(
         moment(appointmentDate).format("YYYY-MM-DD") + " " + appointmentTime
       );
-      setOpenAppointment(false);
+
+      try {
+        const res = await axios.post(
+          `${POST_APPOINTMENTS}`,
+          {
+            doctorId: selectedDoctor._id,
+            patientId: userInfo.id,
+            doctorName: selectedDoctor.name,
+            doctorProfileImage: selectedDoctor.profileImage,
+            patientName: user.name,
+            email: selectedDoctor.email,
+            phoneNo: selectedDoctor.phoneNo,
+            date: moment(appointmentDate).format("YYYY-MM-DD"),
+            time: appointmentTime,
+          },
+          config
+        );
+
+        console.log(res);
+
+        handleDialogClose();
+      } catch (error) {
+        console.log(error);
+      }
     } else {
       setValueMissing(true);
     }

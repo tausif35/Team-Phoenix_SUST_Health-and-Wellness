@@ -56,8 +56,8 @@ function UpdateProfile() {
     name: "",
     email: "",
     gender: "Male",
-    dateOfBirth: Date.now(),
-    phone: "01837735998",
+    dateOfBirth: "",
+    phoneNo: "",
     password: "",
     confirmPassword: "",
   });
@@ -73,12 +73,7 @@ function UpdateProfile() {
       if (!(user && Object.keys(user).length)) {
         dispatch(getUserDetails());
       } else {
-        setValues({
-          ...values,
-          _id: user._id,
-          name: user.name,
-          email: user.email,
-        });
+        setValues({ ...user });
       }
     } else {
       navigate("/sign-in");
@@ -110,7 +105,7 @@ function UpdateProfile() {
       ...user,
       gender: "Male",
       dateOfBirth: Date.now(),
-      phone: "01837735998",
+      phoneNo: "01837735998",
       password: "",
       confirmPassword: "",
     });
@@ -228,13 +223,13 @@ function UpdateProfile() {
             disabled={!inEditMode}
             label="Phone Number"
             type={"tel"}
-            error={valueMissing && !values.phone}
+            error={valueMissing && !values.phoneNo}
             helperText={
-              valueMissing && !values.phone
+              valueMissing && !values.phoneNo
                 ? "Please enter your phone number"
                 : ""
             }
-            value={values.phone}
+            value={values.phoneNo}
             onChange={handleChange("phone")}
           />
         </Grid>

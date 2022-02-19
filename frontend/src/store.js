@@ -1,7 +1,10 @@
 import { applyMiddleware, combineReducers, createStore } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import thunk from "redux-thunk";
-import { doctorListReducer } from "./reducers/appointmentReducer";
+import {
+  doctorListReducer,
+  patientAppointmentListReducer,
+} from "./reducers/appointmentReducer";
 import {
   blogListReducer,
   personalBlogsReducer,
@@ -45,6 +48,7 @@ const reducer = combineReducers({
   singleBlogComments: singleBlogCommentsReducer,
   personalBlogs: personalBlogsReducer,
   writeBlogComment: writeBlogCommentReducer,
+  patientAppointmentList: patientAppointmentListReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")

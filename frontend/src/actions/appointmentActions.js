@@ -1,9 +1,15 @@
 import axios from "axios";
-import { GET_DOCTOR_LIST } from "../constants/apiLinks";
+import {
+  GET_DOCTOR_LIST,
+  GET_PATIENT_APPOINTMENTS,
+} from "../constants/apiLinks";
 import {
   FIND_DOCTOR_FAIL,
   FIND_DOCTOR_REQUEST,
   FIND_DOCTOR_SUCCESS,
+  GET_PATIENT_APPOINTMENTS_FAIL,
+  GET_PATIENT_APPOINTMENTS_REQUEST,
+  GET_PATIENT_APPOINTMENTS_SUCCESS,
 } from "../constants/appointmentConstants";
 
 export const doctorList =
@@ -41,3 +47,37 @@ export const doctorList =
       });
     }
   };
+
+export const getPatientAppointments = () => async (dispatch, getState) => {
+  try {
+    dispatch({ type: GET_PATIENT_APPOINTMENTS_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const res = await axios.get(`${GET_PATIENT_APPOINTMENTS}`, config);
+
+    console.log(res.data.data);
+
+    dispatch({
+      type: GET_PATIENT_APPOINTMENTS_SUCCESS,
+      payload: res.data.data.patient.appointments,
+    });
+  } catch (error) {
+    dispatch({
+      type: GET_PATIENT_APPOINTMENTS_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};

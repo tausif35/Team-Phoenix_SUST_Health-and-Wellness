@@ -9,9 +9,13 @@ export const POST_USER_LOGIN = `${API_HOST}/api/patients/login`;
 
 export const POST_DOCTOR_LOGIN = `${API_HOST}/api/doctors/login`;
 
-export const GET_USER_PROFILE = `${API_HOST}/api/users/profile`;
+export const GET_USER_PROFILE = `${API_HOST}/api/patients/profile`;
+
+export const GET_DOCTOR_PROFILE = `${API_HOST}/api/doctors/profile`;
 
 export const UPDATE_USER_PROFILE = `${API_HOST}/api/users/profile`;
+
+export const UPDATE_DOCTOR_PROFILE = `${API_HOST}/api/doctors/profile`;
 
 export const GET_DOCTOR_LIST = `${API_HOST}/api/doctors/find`;
 
@@ -44,3 +48,11 @@ export const GET_BLOG_COMMENTS = `${API_HOST}/api/blogs/comment`;
 export const GET_PERSONAL_BLOGS = `${API_HOST}/api/blogs/doctor`;
 
 export const GET_DOCTOR_AVAILABLE_APPOINTMENTS = `${API_HOST}/api/appointments/slots`;
+
+export const POST_APPOINTMENTS = `${API_HOST}/api/appointments`;
+
+export const CANCEL_APPOINTMENTS = `${API_HOST}/api/appointments`;
+
+export const GET_PATIENT_APPOINTMENTS = `${API_HOST}/api/patients/appointments`;
+
+export const GET_DELETE_APPOINTMENTS = `${API_HOST}/api/appointments`;

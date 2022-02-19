@@ -139,22 +139,22 @@ exports.login = async (req, res, next) => {
 };
 
 exports.getProfile = async (req, res, next) => {
-    const patientId = req.params.patientId;
-    let patient;
-    try {
-        patient = await Patient.findById(patientId);
-    } catch (error) {
-        console.log(error.message);
-        return next(
-        new HttpError("Something went wrong, could not find patient.", 500)
-        );
-    }
-    if (!patient) {
-        return next(
-        new HttpError("Something went wrong, could not find patient.", 500)
-        );
-    }
-    res.status(200).json({ patient: patient.toObject({ getters: true }) });
+  const patientId = req.params.id;
+  let patient;
+  try {
+    patient = await Patient.findById(patientId);
+  } catch (error) {
+    console.log(error.message);
+    return next(
+      new HttpError("Something went wrong, could not find patient.", 500)
+    );
+  }
+  if (!patient) {
+    return next(
+      new HttpError("Something went wrong, could not find patient.", 500)
+    );
+  }
+  res.status(200).json({ patient: patient.toObject({ getters: true }) });
 };
 
 exports.editInfo = async (req, res, next) => {
