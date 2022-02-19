@@ -1,5 +1,6 @@
 import axios from "axios";
 import {
+  GET_DOCTOR_APPOINTMENTS,
   GET_DOCTOR_LIST,
   GET_PATIENT_APPOINTMENTS,
 } from "../constants/apiLinks";
@@ -63,14 +64,26 @@ export const getPatientAppointments = () => async (dispatch, getState) => {
       },
     };
 
-    const res = await axios.get(`${GET_PATIENT_APPOINTMENTS}`, config);
+    const reqLink =
+      userInfo.role === "user"
+        ? GET_PATIENT_APPOINTMENTS
+        : GET_DOCTOR_APPOINTMENTS;
+
+    const res = await axios.get(`${reqLink}`, config);
 
     console.log(res.data.data);
 
-    dispatch({
-      type: GET_PATIENT_APPOINTMENTS_SUCCESS,
-      payload: res.data.data.patient.appointments,
-    });
+    if (userInfo.role === "user") {
+      dispatch({
+        type: GET_PATIENT_APPOINTMENTS_SUCCESS,
+        payload: res.data.data.patient.appointments,
+      });
+    } else {
+      dispatch({
+        type: GET_PATIENT_APPOINTMENTS_SUCCESS,
+        payload: res.data.data.doctor.appointments,
+      });
+    }
   } catch (error) {
     dispatch({
       type: GET_PATIENT_APPOINTMENTS_FAIL,
