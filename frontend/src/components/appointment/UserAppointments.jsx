@@ -1,14 +1,37 @@
-import { Paper, Stack, Avatar, Typography, Grid, Button } from "@mui/material";
+import {
+  Stack,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  DialogActions,
+  Alert,
+} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { getPatientAppointments } from "../../actions/appointmentActions";
-import { API_HOST, DELETE_APPOINTMENTS } from "../../constants/apiLinks";
+import {
+  DELETE_APPOINTMENTS,
+  SEND_APPOINTMENT_PRESCRIPTION,
+} from "../../constants/apiLinks";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import AppointmentItem from "./AppointmentItem";
 
 function UserAppointments() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const [valueMissing, setValueMissing] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+  const [diagnosis, setDiagnosis] = useState("");
+  const [tests, setTests] = useState("");
+  const [advice, setAdvice] = useState("");
+
+  const [appointmentPrescriptionId, setAppointmentPrescriptionId] =
+    useState("");
+
   const { loading, error, appointments } = useSelector(
     (state) => state.patientAppointmentList
   );
@@ -18,92 +41,98 @@ function UserAppointments() {
     dispatch(getPatientAppointments());
   }, [dispatch]);
 
-  const handleCancelAppointmentClick = async (id) => {
+  const handleMakePrescriptionClick = (id) => {
+    setAppointmentPrescriptionId(id);
+    setShowDialog(true);
+  };
+
+  const handleDialogClose = () => {
+    setShowDialog(false);
+  };
+
+  const handlePrescriptionPost = async () => {
     const config = {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
-    try {
-      const res = await axios.delete(`${DELETE_APPOINTMENTS}/${id}`, config);
 
-      console.log(res.data);
+    if (diagnosis || tests || advice) {
+      try {
+        const res = await axios.patch(
+          `${SEND_APPOINTMENT_PRESCRIPTION}/${appointmentPrescriptionId}`,
+          { diagnosis, tests, advice },
+          config
+        );
 
-      dispatch(getPatientAppointments());
-    } catch (error) {
-      console.log(error);
+        console.log(res.data);
+
+        setShowDialog(false);
+        setValueMissing(false);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      setValueMissing(true);
     }
-  };
-
-  const handleChatClick = (id) => {
-    navigate("/appointments/chat");
   };
 
   return (
     <Stack spacing={4} alignItems={"center"}>
-      {appointments.length ? (
+      {appointments.length &&
         appointments.map((item, index) => (
-          <Paper key={index} sx={{ width: "100%", maxWidth: "1000px" }}>
-            <Stack
-              spacing={4}
-              p={2}
-              direction={{ xs: "column", md: "row" }}
-              alignItems={"center"}
-              justifyContent={"space-between"}
-            >
-              <Avatar
-                alt="Profile Picture"
-                src={
-                  item.doctorProfileImage &&
-                  `${API_HOST}/${item.doctorProfileImage}`
-                }
-                sx={{ width: 80, height: 80 }}
-              />
+          <AppointmentItem
+            key={index}
+            item={item}
+            userInfo={userInfo}
+            handleMakePrescriptionClick={handleMakePrescriptionClick}
+          />
+        ))}
 
-              <Stack spacing={2}>
-                <Typography variant="body1" fontWeight={"bold"}>
-                  {item.doctorName}
-                </Typography>
-                <Typography variant="body1">
-                  {item.date} {item.time}
-                </Typography>
-              </Stack>
-              <Typography variant="body1" fontWeight={"bold"}>
-                {item.appointmentTitle}
-              </Typography>
-              <Stack spacing={2}>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  onClick={() => handleChatClick(item._id)}
-                >
-                  Chat
-                </Button>
-                <Button fullWidth variant="contained">
-                  Join session
-                </Button>
-              </Stack>
+      <Dialog fullWidth open={showDialog} onClose={handleDialogClose}>
+        <DialogTitle>Create Prescription</DialogTitle>
 
-              <Stack spacing={2}>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  color="error"
-                  onClick={() => handleCancelAppointmentClick(item._id)}
-                >
-                  Cancel Appointment
-                </Button>
-                <Button fullWidth variant="contained">
-                  Get prescription
-                </Button>
-              </Stack>
-            </Stack>
-          </Paper>
-        ))
-      ) : (
-        <></>
-      )}
+        <DialogContent>
+          <Stack spacing={4} py={1}>
+            {valueMissing && (
+              <Alert severity="error">At least one field must be filled</Alert>
+            )}
+
+            <TextField
+              multiline
+              minRows={2}
+              variant="outlined"
+              label="Diagnosis"
+              onChange={(e) => setDiagnosis(e.target.value)}
+              defaultValue=""
+            />
+
+            <TextField
+              multiline
+              minRows={2}
+              variant="outlined"
+              label="Give Test"
+              onChange={(e) => setTests(e.target.value)}
+              defaultValue=""
+            />
+
+            <TextField
+              multiline
+              minRows={2}
+              variant="outlined"
+              label="Advices"
+              onChange={(e) => setAdvice(e.target.value)}
+              defaultValue=""
+            />
+          </Stack>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={handleDialogClose}>Cancel</Button>
+          <Button onClick={handlePrescriptionPost}>Send</Button>
+        </DialogActions>
+      </Dialog>
     </Stack>
   );
 }

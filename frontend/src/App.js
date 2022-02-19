@@ -14,7 +14,6 @@ import BlogCreatePage from "./pages/BlogCreatePage";
 import SingleBlogPage from "./pages/SingleBlogPage";
 import SmartDetectPage from "./pages/SmartDetect";
 import VideoChatPage from "./pages/VideoChat/VideoChatPage";
-import PrescriptionDownloadPage from "./pages/PrescriptionDownloadPage";
 import ChatPage from "./pages/ChatPage";
 
 function App() {

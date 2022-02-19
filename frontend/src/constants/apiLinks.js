@@ -53,6 +53,10 @@ export const POST_APPOINTMENTS = `${API_HOST}/api/appointments`;
 
 export const CANCEL_APPOINTMENTS = `${API_HOST}/api/appointments`;
 
+export const SEND_APPOINTMENT_PRESCRIPTION = `${API_HOST}/api/appointments/prescription`;
+
+export const GET_APPOINTMENT_PRESCRIPTION = `${API_HOST}/api/appointments/prescription`;
+
 export const GET_PATIENT_APPOINTMENTS = `${API_HOST}/api/patients/appointments`;
 
 export const GET_DOCTOR_APPOINTMENTS = `${API_HOST}/api/doctors/appointments`;

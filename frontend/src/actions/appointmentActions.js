@@ -71,17 +71,17 @@ export const getPatientAppointments = () => async (dispatch, getState) => {
 
     const res = await axios.get(`${reqLink}`, config);
 
-    console.log(res.data.data);
+    console.log(res.data.data.appointments);
 
     if (userInfo.role === "user") {
       dispatch({
         type: GET_PATIENT_APPOINTMENTS_SUCCESS,
-        payload: res.data.data.patient.appointments,
+        payload: res.data.data.appointments,
       });
     } else {
       dispatch({
         type: GET_PATIENT_APPOINTMENTS_SUCCESS,
-        payload: res.data.data.doctor.appointments,
+        payload: res.data.data.appointments,
       });
     }
   } catch (error) {

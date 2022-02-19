@@ -11,10 +11,9 @@ const commentSchema = new mongoose.Schema({
   },
   commentedBy: {
     type: mongoose.Schema.ObjectId,
-    ref: "Patient"
+    ref: "Patient",
   },
-  userName:String
+  name: String,
 });
 
 module.exports = mongoose.model("Comment", commentSchema);
-

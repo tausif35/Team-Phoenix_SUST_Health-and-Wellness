@@ -10,7 +10,9 @@ function BlogCommentItem({ item }) {
   return (
     <Stack direction={"row"} m={2} spacing={2} alignItems="center">
       <Stack spacing={2}>
-        <Typography variant="body1">Commenter name</Typography>
+        <Typography variant="body1" fontWeight={"bold"}>
+          {item.name}
+        </Typography>
       </Stack>
 
       <Divider orientation="vertical" flexItem />

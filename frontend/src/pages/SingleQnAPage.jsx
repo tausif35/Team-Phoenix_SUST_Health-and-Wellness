@@ -27,7 +27,7 @@ function SingleQnAPage() {
       {userInfo.role === "doctor" && (
         <AnswerField questionId={params.questionId} />
       )}
-      <AnswerList answers={question.answers} />
+      <AnswerList answers={question._answersId} />
     </Stack>
   ) : (
     <></>

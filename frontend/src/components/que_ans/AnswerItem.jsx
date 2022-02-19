@@ -42,9 +42,11 @@ function AnswerItem({ item, userInfo }) {
   return (
     <Stack direction={"row"} m={2} spacing={2} alignItems="center">
       <Stack spacing={2}>
-        <Typography variant="body1">Answerer name</Typography>
+        <Typography variant="body1" fontWeight={"bold"}>
+          {answer.doctorName}
+        </Typography>
 
-        <Typography variant="body1" color={"primary"}>
+        <Typography variant="body1" fontWeight={"bold"} color={"primary"}>
           {answer.upvotes.length} upvotes
         </Typography>
       </Stack>
