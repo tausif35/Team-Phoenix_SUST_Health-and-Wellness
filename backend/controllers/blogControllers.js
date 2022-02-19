@@ -70,7 +70,7 @@ exports.getAllBlogs = async (req, res, next) => {
     let blogs;
     let filteredBlogs;
     try {
-        blogs = await Blog.find().populate();
+        blogs = await Blog.find().populate("commentId");
         if (!category) {
             filteredBlogs = blogs;
         } else {
@@ -148,7 +148,7 @@ exports.getBlog = async (req, res, next) => {
     const id = req.params.id;
     let blog;
     try {
-        blog = await Blog.findById(id).populate();
+        blog = await Blog.findById(id).populate("commentId");
     } catch (error) {
         return next(new HttpError("Something Went Wrong", 401));
     }
@@ -183,6 +183,7 @@ exports.commentBlog = async (req, res, next) => {
         blogId: blogId,
         comment: comment,
         commentedBy: req.userData.id,
+        name: req.userData.name,
         upvotes: []
     });
     try {

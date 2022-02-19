@@ -33,7 +33,7 @@ exports.getAllQuestion = async (req, res, next) => {
         sortBy = "dateDesc";
     }
     if (!category) {
-        let questions = await Question.find().populate();
+        let questions = await Question.find().populate("_answersId");
         questions = sort(questions, sortBy);
         res.status(200).json({
             message: "successful",
@@ -46,7 +46,7 @@ exports.getAllQuestion = async (req, res, next) => {
         try {
             let questions = await Question.find({
                 questionCategory: category,
-            }).populate();
+            }).populate("_answersId");
             questions = sort(questions, sortBy);
             res.status(200).json({
                 message: "successful",
@@ -65,7 +65,7 @@ exports.getQuestionByCategory = async (req, res, next) => {
     const { category } = req.query;
 
     if (!category) {
-        const questions = await Question.find().populate();
+        const questions = await Question.find().populate("_answersId");
 
         res.status(200).json({
             message: "successful",
@@ -76,7 +76,7 @@ exports.getQuestionByCategory = async (req, res, next) => {
         });
     } else {
         try {
-            const questions = await Question.find({ category: category }).populate();
+            const questions = await Question.find({ category: category }).populate("_answersId");
             res.status(200).json({
                 message: "successful",
                 No_of_questions: questions.length,
@@ -167,10 +167,7 @@ exports.getQuestionsOfAnUser = async (req, res, next) => {
 };
 
 exports.getAQuestion = async (req, res, next) => {
-    const question = await Question.findById(req.params.id).populate({
-        path: "answers",
-        select: "answer answeredBy upvotes",
-    });
+    const question = await Question.findById(req.params.id).populate("_answersId");
 
     res.status(200).json({
         message: "successful",

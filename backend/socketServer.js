@@ -64,6 +64,9 @@ io.on("connection", (socket) => {
             io.sockets.in(room).emit("recieve-emergency", sentMessage);
         } 
     });
+    // socket.on("test", (sentMessage) => {
+    //     console.log(sentMessage);
+    // });
 
     socket.on("join-room", (room, cb) => {
         // socket.emit("joined room", messages)
