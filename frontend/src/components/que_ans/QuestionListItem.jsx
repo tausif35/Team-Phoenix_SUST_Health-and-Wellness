@@ -1,5 +1,6 @@
 import { ArrowForwardIos } from "@mui/icons-material";
 import { Card, CardActionArea, Chip, Stack, Typography } from "@mui/material";
+import moment from "moment";
 import { useNavigate } from "react-router-dom";
 
 function QuestionListItem({ item }) {
@@ -34,7 +35,11 @@ function QuestionListItem({ item }) {
           </Typography>
 
           <Typography variant="body2" color={"text.secondary"}>
-            — {item.askedBy ? item.askedBy : "Anonymous"} at Date and Time
+            — {item.askedBy ? item.askedBy : "Anonymous"}
+            {" at "}
+            {moment(Number(item.createdAt)).format(
+              "dddd, MMMM Do, YYYY, h:mm a"
+            )}
           </Typography>
 
           <Typography variant="body2" color={"text.secondary"}>

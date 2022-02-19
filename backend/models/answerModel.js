@@ -13,6 +13,7 @@ const answerSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: "Doctor"
   },
+  doctorName: {type: String},
   upvotes: [{ type: mongoose.Schema.ObjectId, ref: "Patient" }],
 });
 

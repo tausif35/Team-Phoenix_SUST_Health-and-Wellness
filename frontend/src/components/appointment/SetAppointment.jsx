@@ -2,15 +2,39 @@ import {
   Avatar,
   Button,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
+  MenuItem,
   Stack,
+  TextField,
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
 import { API_HOST } from "../../constants/apiLinks";
+import { LocalizationProvider, StaticDatePicker } from "@mui/lab";
+
+import AdapterMoment from "@mui/lab/AdapterMoment";
 
 function SetAppointment({ selectedDoctor }) {
   const [openAppointment, setOpenAppointment] = useState(false);
+
+  const [appointmentDate, setAppointmentDate] = useState(new Date());
+  const [appointmentTime, setAppointmentTime] = useState("");
+
+  const handleDialogClose = () => {
+    setOpenAppointment(false);
+  };
+
+  const handleSetAppointment = () => {
+    setOpenAppointment(false);
+  };
+
+  const handleDateChange = (newValue) => {
+    setAppointmentDate(newValue);
+  };
 
   return (
     <Stack spacing={5}>
@@ -85,11 +109,50 @@ function SetAppointment({ selectedDoctor }) {
         </Typography>
       </Stack>
 
+      <Dialog fullWidth open={openAppointment} onClose={handleDialogClose}>
+        <DialogTitle>Pick Appointment</DialogTitle>
+
+        <DialogContent>
+          <Stack spacing={4} py={1}>
+            <LocalizationProvider dateAdapter={AdapterMoment}>
+              <StaticDatePicker
+                orientation="landscape"
+                openTo="day"
+                disablePast
+                value={appointmentDate}
+                onChange={handleDateChange}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </LocalizationProvider>
+
+            <TextField
+              fullWidth
+              variant="outlined"
+              label="Select Time"
+              select
+              value={appointmentTime}
+              onChange={(e) => setAppointmentTime(e.target.value)}
+            >
+              {["01:00 am", "02:00 am"].map((option, index) => (
+                <MenuItem key={index} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Stack>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={handleDialogClose}>Cancel</Button>
+          <Button onClick={handleSetAppointment}>Set Appointment</Button>
+        </DialogActions>
+      </Dialog>
+
       <Button
         variant="contained"
         onClick={(e) => setOpenAppointment(!openAppointment)}
       >
-        {openAppointment ? "Cancel" : "Select Appointment"}
+        Pick Appointment
       </Button>
     </Stack>
   );

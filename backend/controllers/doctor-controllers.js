@@ -168,6 +168,31 @@ exports.login = async (req, res, next) => {
     });
 };
 
+exports.getProfile = async (req, res, next) => {
+    const doctorId = req.params.id;
+    let doctor;
+    try {
+        doctor = await Doctor.findById(doctorId);
+    } catch (error) {
+        return next(
+            new HttpError(
+                "Something went wrong, could not get doctor.",
+                500
+            )
+        );
+    }
+    if (!doctor) {
+        return next(
+            new HttpError(
+                "Could not find doctor.",
+                404
+            )
+        );
+    }
+    res.status(200).json({ doctor: doctor.toObject({ getters: true }) });
+    
+}    
+
 exports.editInfo = async (req, res, next) => {
     const error = validationResult(req);
     if (!error.isEmpty()) {

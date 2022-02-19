@@ -3,6 +3,14 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import thunk from "redux-thunk";
 import { doctorListReducer } from "./reducers/appointmentReducer";
 import {
+  blogListReducer,
+  personalBlogsReducer,
+  postBlogReducer,
+  singleBlogCommentsReducer,
+  singleBlogReducer,
+  writeBlogCommentReducer,
+} from "./reducers/blogReducer";
+import {
   askQuestionReducer,
   personalQuestionsReducer,
   questionListReducer,
@@ -19,6 +27,7 @@ import {
 } from "./reducers/userReducer";
 
 const reducer = combineReducers({
+  socketConnection: socketConnectionReducer,
   userRegister: userRegisterReducer,
   userLogin: userLoginReducer,
   userDetails: userDetailsReducer,
@@ -30,7 +39,12 @@ const reducer = combineReducers({
   singleQuestion: singleQuestionReducer,
   personalQuestions: personalQuestionsReducer,
   writeAnswer: writeAnswerReducer,
-  socketConnection: socketConnectionReducer,
+  postBlog: postBlogReducer,
+  blogList: blogListReducer,
+  singleBlog: singleBlogReducer,
+  singleBlogComments: singleBlogCommentsReducer,
+  personalBlogs: personalBlogsReducer,
+  writeBlogComment: writeBlogCommentReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")

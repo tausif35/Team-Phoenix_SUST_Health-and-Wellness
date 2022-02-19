@@ -6,7 +6,7 @@ import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 import { Button, Divider, MenuItem, Stack, TextField } from "@mui/material";
-import { questionCategories } from "../../utils/categoryList";
+import { questionCategories, questionSortBy } from "../../utils/categoryList";
 import { useDispatch } from "react-redux";
 import { getQuestionList } from "../../actions/queAnsActions";
 
@@ -100,9 +100,9 @@ function QuestionFilter() {
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
             >
-              {questionCategories.map((option, index) => (
-                <MenuItem key={index} value={option}>
-                  {option}
+              {questionSortBy.map((option, index) => (
+                <MenuItem key={index} value={option.value}>
+                  {option.valueText}
                 </MenuItem>
               ))}
             </TextField>

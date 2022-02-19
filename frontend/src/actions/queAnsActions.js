@@ -90,7 +90,7 @@ export const getQuestionList = (filter) => async (dispatch, getState) => {
     };
 
     const res = await axios.get(
-      `${GET_QUESTION_LIST}?category=${filter.category}`,
+      `${GET_QUESTION_LIST}?category=${filter.category}&sortBy=${filter.sortBy}`,
       config
     );
 

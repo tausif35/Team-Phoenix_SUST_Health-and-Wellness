@@ -26,7 +26,11 @@ const appointmentSchema = new Schema({
         type: String,
         default: ""
     },
-    prescription: {
+    tests: {
+        type: String,
+        default: ""
+    },
+    advice: {
         type: String,
         default: ""
     },

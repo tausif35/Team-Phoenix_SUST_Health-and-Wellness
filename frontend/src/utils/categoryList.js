@@ -27,3 +27,17 @@ export const specializationList = [
 export const genders = ["Male", "Female", "Other"];
 
 export const questionCategories = ["Diet", "Fitness", "Health", "Vaccine"];
+export const questionSortBy = [
+  { valueText: "Newest", value: "dateDesc" },
+  { valueText: "Oldest", value: "dateAsc" },
+  { valueText: "Most Answered", value: "ansDesc" },
+  { valueText: "Least Answered", value: "ansAsc" },
+];
+
+export const blogCategories = ["Diet", "Fitness", "Health", "Vaccine", "Test"];
+export const blogSortBy = [
+  { valueText: "Newest", value: "dateDesc" },
+  { valueText: "Oldest", value: "dateAsc" },
+  { valueText: "Highest Rated", value: "upvotesDesc" },
+  { valueText: "Lowest Rated", value: "upvotesAsc" },
+];
