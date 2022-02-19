@@ -9,10 +9,15 @@ const fs = require("fs");
 const path = require("path");
 
 async function generatePrescription(appointment) {
-
   // Create a new document and add a new page
   const prescStorage = path.join(__dirname, "../", "public", "uploads");
-  const templateStorage = path.join(prescStorage, "prescriptions", "template", "form.pdf");
+  const templateStorage = path.join(
+    prescStorage,
+    "../",
+    "prescriptions",
+    "template",
+    "form.pdf"
+  );
   let myFile = fs.readFileSync(templateStorage);
 
   const pdfDoc = await PDFDocument.load(myFile);
@@ -46,7 +51,6 @@ async function generatePrescription(appointment) {
     prescStorage + `/${appointment.id}_prescription.pdf`,
     await pdfDoc.save()
   );
-
 }
 
 const timeSlots = require("../utils/timeSlots");
@@ -54,37 +58,39 @@ const timeSlots = require("../utils/timeSlots");
 exports.getAllAppointments = async (req, res, next) => {
   let appointments;
   try {
-    appointments = await Appointment.find().populate('doctorId');
+    appointments = await Appointment.find().populate("doctorId");
   } catch (error) {
-    return next(new HttpError('Something went wrong, could not get appointments', 500));
+    return next(
+      new HttpError("Something went wrong, could not get appointments", 500)
+    );
   }
 
-  res.status(200).json({ appointments: appointments.map(appointment => appointment.toObject({ getters: true })) });
-}
+  res.status(200).json({
+    appointments: appointments.map((appointment) =>
+      appointment.toObject({ getters: true })
+    ),
+  });
+};
 
 exports.createAppointment = async (req, res, next) => {
-  const {
-    doctorId,
-    patientId,
-    title,
-    timeStamp,
-    date,
-    time,
-  } = req.body;
+  const { doctorId, patientId, title, timeStamp, date, time } = req.body;
   const createdAppointment = new Appointment({
     doctorId,
     patientId,
     title,
     timeStamp,
     date,
-    time
+    time,
   });
   try {
     const doctor = await Doctor.findById(doctorId);
     let patient;
     patient = await Patient.findById(patientId);
     if (!doctor || !patient) {
-      throw new HttpError('Could not find doctor or patient for this appointment', 404);
+      throw new HttpError(
+        "Could not find doctor or patient for this appointment",
+        404
+      );
     }
     let session;
     session = await mongoose.startSession();
@@ -97,10 +103,12 @@ exports.createAppointment = async (req, res, next) => {
     await session.commitTransaction();
   } catch (error) {
     console.log(error.message);
-    return next(new HttpError('Something went wrong, could not create appointment', 500));
+    return next(
+      new HttpError("Something went wrong, could not create appointment", 500)
+    );
   }
   res.status(201).json({
-    appointment: createdAppointment.toObject({ getters: true })
+    appointment: createdAppointment.toObject({ getters: true }),
   });
 };
 
@@ -171,20 +179,15 @@ exports.getPrescription = async (req, res, next) => {
 
   generatePrescription(appointment).catch((err) => console.log(err));
 
-  res
-    .status(200)
-    .json({
-      filePath: `public/uploads/${appointment.id}_prescription.pdf`
-    });
+  res.status(200).json({
+    filePath: `public/uploads/${appointment.id}_prescription.pdf`,
+  });
 
-
-  res
-    .status(200)
-    .json({
-      diagnosis: appointment.diagnosis,
-      tests: appointment.tests,
-      advice: appointment.advice,
-    });
+  res.status(200).json({
+    diagnosis: appointment.diagnosis,
+    tests: appointment.tests,
+    advice: appointment.advice,
+  });
 
   //   res.status(200).json({ diagnosis: appointment.diagnosis, tests: appointment.tests, advice: appointment.advice });
 };
@@ -234,16 +237,19 @@ exports.getAppointmentSlots = async (req, res, next) => {
   const { doctorId, date } = req.body;
   let doctor;
   try {
-    doctor = await Doctor.findById(doctorId).populate('appointments');
+    doctor = await Doctor.findById(doctorId).populate("appointments");
   } catch (error) {
-    return next(new HttpError('Something went wrong, could not get doctor', 500));
+    return next(
+      new HttpError("Something went wrong, could not get doctor", 500)
+    );
   }
   if (!doctor) {
-    return next(new HttpError('Could not find doctor for this id', 404));
+    return next(new HttpError("Could not find doctor for this id", 404));
   }
   let times = [];
   let today = new Date();
-  let dt = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+  let dt =
+    today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
   const nowDate = dt.toString();
   if (date !== nowDate) {
     for (let i = 0; i < doctor.appointments.length; i++) {

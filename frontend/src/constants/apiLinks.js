@@ -13,9 +13,9 @@ export const GET_USER_PROFILE = `${API_HOST}/api/patients/profile`;
 
 export const GET_DOCTOR_PROFILE = `${API_HOST}/api/doctors/profile`;
 
-export const UPDATE_USER_PROFILE = `${API_HOST}/api/users/profile`;
+export const UPDATE_USER_PROFILE = `${API_HOST}/api/patients`;
 
-export const UPDATE_DOCTOR_PROFILE = `${API_HOST}/api/doctors/profile`;
+export const UPDATE_DOCTOR_PROFILE = `${API_HOST}/api/doctors`;
 
 export const GET_DOCTOR_LIST = `${API_HOST}/api/doctors/find`;
 

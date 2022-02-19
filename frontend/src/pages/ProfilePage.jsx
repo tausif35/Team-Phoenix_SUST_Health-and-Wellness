@@ -87,7 +87,7 @@ function ProfilePage() {
           <Key />
           <Typography variant="body1">Password</Typography>
         </StyledNavLink>
-        <StyledNavLink to="/">
+        <StyledNavLink to="/profile/other">
           <AdminPanelSettings />
           <Typography variant="body1">Other</Typography>
         </StyledNavLink>

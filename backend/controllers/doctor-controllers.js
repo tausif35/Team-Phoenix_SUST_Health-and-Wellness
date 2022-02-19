@@ -173,11 +173,6 @@ exports.getProfile = async (req, res, next) => {
 };
 
 exports.editInfo = async (req, res, next) => {
-  const error = validationResult(req);
-  if (!error.isEmpty()) {
-    return next(new HttpError("Invalid inputs", 422));
-  }
-
   const doctorId = req.params.doctorId;
   const { phoneNo, password, specializations, qualifications, workplaces } =
     req.body;
@@ -322,13 +317,11 @@ exports.getDoctors = async (req, res, next) => {
   } else {
     filteredDoctors = doctors;
   }
-  res
-    .status(200)
-    .json({
-      doctors: filteredDoctors.map((doctor) =>
-        doctor.toObject({ getters: true })
-      ),
-    });
+  res.status(200).json({
+    doctors: filteredDoctors.map((doctor) =>
+      doctor.toObject({ getters: true })
+    ),
+  });
 };
 
 exports.getDoctor = async (req, res, next) => {

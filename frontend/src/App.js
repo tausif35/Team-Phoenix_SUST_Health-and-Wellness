@@ -13,8 +13,9 @@ import SingleQnAPage from "./pages/SingleQnAPage";
 import BlogCreatePage from "./pages/BlogCreatePage";
 import SingleBlogPage from "./pages/SingleBlogPage";
 import SmartDetectPage from "./pages/SmartDetect";
-import VideoChatPage from "./pages/VideoChat/VideoChatPage";
+import VideoChatPage from "./pages/VideoChatPage";
 import ChatPage from "./pages/ChatPage";
+import OtherProfile from "./components/profile/OtherProfile";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
         <Route path="/profile" element={<ProfilePage />}>
           <Route path="account" element={<UpdateProfile />} />
           <Route path="change-password" element={<UpdatePassword />} />
+          <Route path="other" element={<OtherProfile />} />
         </Route>
       </Routes>
     </>

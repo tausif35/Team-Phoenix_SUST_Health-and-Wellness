@@ -7,6 +7,7 @@ import {
   POST_DOCTOR_REGISTER,
   POST_DOCTOR_LOGIN,
   GET_DOCTOR_PROFILE,
+  UPDATE_DOCTOR_PROFILE,
 } from "../constants/apiLinks";
 import {
   USER_LOGIN_FAIL,
@@ -158,19 +159,16 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
-    const res = await axios.patch(UPDATE_USER_PROFILE, user, config);
+
+    const reqLink =
+      userInfo.role === "doctor" ? UPDATE_DOCTOR_PROFILE : UPDATE_USER_PROFILE;
+
+    const res = await axios.patch(`${reqLink}/${userInfo.id}`, user, config);
 
     dispatch({
       type: USER_PROFILE_UPDATE_SUCCESS,
-      payload: res.data,
+      payload: userInfo.role === "doctor" ? res.data.doctor : res.data.patient,
     });
-
-    dispatch({
-      type: USER_LOGIN_SUCCESS,
-      payload: res.data,
-    });
-
-    saveToLocalStorage(res.data);
   } catch (error) {
     dispatch({
       type: USER_PROFILE_UPDATE_FAIL,
@@ -197,8 +195,14 @@ export const updateUserPassword =
           Authorization: `Bearer ${userInfo.token}`,
         },
       };
+
+      const reqLink =
+        userInfo.role === "doctor"
+          ? UPDATE_DOCTOR_PROFILE
+          : UPDATE_USER_PROFILE;
+
       const res = await axios.put(
-        UPDATE_USER_PROFILE,
+        `${reqLink}/${userInfo.id}`,
         { oldPassword, newPassword },
         config
       );
@@ -218,6 +222,6 @@ export const updateUserPassword =
     }
   };
 
-function saveToLocalStorage(userInfo, role = "user") {
+function saveToLocalStorage(userInfo, role) {
   localStorage.setItem("userInfo", JSON.stringify({ ...userInfo, role: role }));
 }

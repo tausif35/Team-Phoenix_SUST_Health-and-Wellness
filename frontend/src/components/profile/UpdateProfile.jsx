@@ -19,6 +19,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getUserDetails, updateUserProfile } from "../../actions/userActions";
+import { genders } from "../../utils/categoryList";
 
 const StyledTextField = styled(TextField)`
   & label.Mui-disabled,
@@ -41,8 +42,6 @@ function UpdateProfile() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const genders = ["Male", "Female", "Other"];
-
   const [inEditMode, setEditMode] = useState(false);
 
   const [valueMissing, setValueMissing] = useState(false);
@@ -55,7 +54,7 @@ function UpdateProfile() {
   const [values, setValues] = useState({
     name: "",
     email: "",
-    gender: "Male",
+    gender: "",
     dateOfBirth: "",
     phoneNo: "",
     password: "",
@@ -103,9 +102,6 @@ function UpdateProfile() {
     });
     setValues({
       ...user,
-      gender: "Male",
-      dateOfBirth: Date.now(),
-      phoneNo: "01837735998",
       password: "",
       confirmPassword: "",
     });
@@ -121,10 +117,7 @@ function UpdateProfile() {
       setValueMissing(true);
       dispatch(
         updateUserProfile({
-          _id: values.id,
-          name: values.name,
-          email: values.email,
-          password: values.password,
+          ...values,
         })
       );
     } else {
@@ -230,7 +223,7 @@ function UpdateProfile() {
                 : ""
             }
             value={values.phoneNo}
-            onChange={handleChange("phone")}
+            onChange={handleChange("phoneNo")}
           />
         </Grid>
 

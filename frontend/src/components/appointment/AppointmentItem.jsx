@@ -37,7 +37,9 @@ function AppointmentItem({ item, userInfo, handleMakePrescriptionClick }) {
         config
       );
 
-      console.log(res.data);
+      console.log(res.data.filePath);
+
+      window.open(`${API_HOST}/${res.data.filePath}`, "_blank");
     } catch (error) {
       console.log(error);
     }

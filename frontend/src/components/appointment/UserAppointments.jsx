@@ -80,7 +80,7 @@ function UserAppointments() {
 
   return (
     <Stack spacing={4} alignItems={"center"}>
-      {appointments.length &&
+      {appointments.length > 0 &&
         appointments.map((item, index) => (
           <AppointmentItem
             key={index}
