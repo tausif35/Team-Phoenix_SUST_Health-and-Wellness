@@ -43,4 +43,4 @@ export const GET_BLOG_COMMENTS = `${API_HOST}/api/blogs/comment`;
 
 export const GET_PERSONAL_BLOGS = `${API_HOST}/api/blogs/doctor`;
 
-export const GET_DOCTOR_AVAILABLE_APPOINTMENTS = `${API_HOST}/api/doctors`;
+export const GET_DOCTOR_AVAILABLE_APPOINTMENTS = `${API_HOST}/api/appointments/slots`;

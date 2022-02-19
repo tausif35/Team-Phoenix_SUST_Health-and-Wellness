@@ -12,28 +12,74 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
-import { API_HOST } from "../../constants/apiLinks";
+import React, { useEffect, useState } from "react";
+import {
+  API_HOST,
+  GET_DOCTOR_AVAILABLE_APPOINTMENTS,
+} from "../../constants/apiLinks";
 import { LocalizationProvider, StaticDatePicker } from "@mui/lab";
 
 import AdapterMoment from "@mui/lab/AdapterMoment";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import moment from "moment";
 
 function SetAppointment({ selectedDoctor }) {
+  const [valueMissing, setValueMissing] = useState(false);
   const [openAppointment, setOpenAppointment] = useState(false);
-
-  const [appointmentDate, setAppointmentDate] = useState(new Date());
+  const [appointmentDate, setAppointmentDate] = useState("");
   const [appointmentTime, setAppointmentTime] = useState("");
+  const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
+  const { loading, error, userInfo } = useSelector((state) => state.userLogin);
+
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${userInfo.token}`,
+    },
+  };
 
   const handleDialogClose = () => {
+    setAppointmentDate("");
+    setAppointmentTime("");
+    setAvailableTimeSlots([]);
     setOpenAppointment(false);
+  };
+
+  const handleDateChange = async (newValue) => {
+    if (newValue) {
+      try {
+        const res = await axios.post(
+          `${GET_DOCTOR_AVAILABLE_APPOINTMENTS}`,
+          {
+            doctorId: selectedDoctor._id,
+            date: moment(newValue).format("YYYY-MM-DD"),
+          },
+          config
+        );
+
+        setAvailableTimeSlots(res.data.times);
+        setAppointmentTime("");
+      } catch (error) {
+        console.log(
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message
+        );
+      }
+    }
+    setAppointmentDate(newValue);
   };
 
   const handleSetAppointment = () => {
-    setOpenAppointment(false);
-  };
-
-  const handleDateChange = (newValue) => {
-    setAppointmentDate(newValue);
+    if (appointmentDate && appointmentTime) {
+      console.log(
+        moment(appointmentDate).format("YYYY-MM-DD") + " " + appointmentTime
+      );
+      setOpenAppointment(false);
+    } else {
+      setValueMissing(true);
+    }
   };
 
   return (
@@ -121,19 +167,35 @@ function SetAppointment({ selectedDoctor }) {
                 disablePast
                 value={appointmentDate}
                 onChange={handleDateChange}
-                renderInput={(params) => <TextField {...params} />}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    error={valueMissing && !appointmentDate}
+                    helperText={
+                      valueMissing && !appointmentDate
+                        ? "Please pick an appointment date"
+                        : ""
+                    }
+                  />
+                )}
               />
             </LocalizationProvider>
 
             <TextField
               fullWidth
               variant="outlined"
-              label="Select Time"
+              label="Available Time Slots"
               select
               value={appointmentTime}
               onChange={(e) => setAppointmentTime(e.target.value)}
+              error={valueMissing && !appointmentTime}
+              helperText={
+                valueMissing && !appointmentTime
+                  ? "Please pick an appointment time"
+                  : ""
+              }
             >
-              {["01:00 am", "02:00 am"].map((option, index) => (
+              {availableTimeSlots.map((option, index) => (
                 <MenuItem key={index} value={option}>
                   {option}
                 </MenuItem>

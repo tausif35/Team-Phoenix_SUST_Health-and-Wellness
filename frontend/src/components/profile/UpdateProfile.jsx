@@ -239,35 +239,37 @@ function UpdateProfile() {
           />
         </Grid>
 
-        <Grid item xs={1}>
-          <LocalizationProvider dateAdapter={DateAdapter}>
-            <DatePicker
-              disableFuture
-              disabled={!inEditMode}
-              label="Date of Birth"
-              value={values.dateOfBirth}
-              onChange={(newValue) =>
-                setValues({ ...values, dateOfBirth: newValue })
-              }
-              renderInput={(params) => (
-                <StyledTextField
-                  {...params}
-                  fullWidth
-                  variant={inEditMode ? "outlined" : "standard"}
-                  error={valueMissing && !values.dateOfBirth}
-                  helperText={
-                    valueMissing && !values.dateOfBirth
-                      ? "Please enter your date of birth"
-                      : ""
-                  }
-                  sx={{
-                    svg: { display: !inEditMode && "none" },
-                  }}
-                />
-              )}
-            />
-          </LocalizationProvider>
-        </Grid>
+        {userInfo.role === "user" && (
+          <Grid item xs={1}>
+            <LocalizationProvider dateAdapter={DateAdapter}>
+              <DatePicker
+                disableFuture
+                disabled={!inEditMode}
+                label="Date of Birth"
+                value={values.dateOfBirth}
+                onChange={(newValue) =>
+                  setValues({ ...values, dateOfBirth: newValue })
+                }
+                renderInput={(params) => (
+                  <StyledTextField
+                    {...params}
+                    fullWidth
+                    variant={inEditMode ? "outlined" : "standard"}
+                    error={valueMissing && !values.dateOfBirth}
+                    helperText={
+                      valueMissing && !values.dateOfBirth
+                        ? "Please enter your date of birth"
+                        : ""
+                    }
+                    sx={{
+                      svg: { display: !inEditMode && "none" },
+                    }}
+                  />
+                )}
+              />
+            </LocalizationProvider>
+          </Grid>
+        )}
 
         {inEditMode && (
           <Grid item xs={1}>
