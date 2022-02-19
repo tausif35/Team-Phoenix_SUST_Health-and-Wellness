@@ -92,21 +92,21 @@ exports.addPescriptionInfo = async (req, res, next) => {
   res.status(200).json({ appointment: appointment.toObject({ getters: true }) });
 };
 
-exports.getPrescription = async (req, res, next) => {
-  const { id } = req.params;
-  let appointment;
-  try {
-    appointment = await Appointment.findById(id)
-  } catch (error) {
-    return next(new HttpError('Something went wrong, could not download prescription', 500));
-  }
-  if (!appointment) {
-    return next(new HttpError('Could not find appointment for this id', 404));
-  }
+// exports.getPrescription = async (req, res, next) => {
+//   const { id } = req.params;
+//   let appointment;
+//   try {
+//     appointment = await Appointment.findById(id)
+//   } catch (error) {
+//     return next(new HttpError('Something went wrong, could not download prescription', 500));
+//   }
+//   if (!appointment) {
+//     return next(new HttpError('Could not find appointment for this id', 404));
+//   }
 
-  res.status(200).json({ diagnosis: appointment.diagnosis, tests: appointment.tests, advice: appointment.advice });
+//   res.status(200).json({ diagnosis: appointment.diagnosis, tests: appointment.tests, advice: appointment.advice });
 
-}
+// }
 
 
 exports.cancelAppointment = async (req, res, next) => {

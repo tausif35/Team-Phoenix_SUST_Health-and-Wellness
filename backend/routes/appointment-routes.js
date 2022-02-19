@@ -10,7 +10,7 @@ router.use(checkAuth);
 router.post('/slots', appointmentController.getAppointmentSlots);
 
 router.get('/', appointmentController.getAllAppointments);
-router.get('/prescription/:id', appointmentController.getPrescription);
+// router.get('/prescription/:id', appointmentController.getPrescription);
 
 router.post('/', appointmentController.createAppointment);
 

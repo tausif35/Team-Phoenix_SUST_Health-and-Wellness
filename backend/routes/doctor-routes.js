@@ -15,6 +15,8 @@ router.post(
 
 router.post('/login', doctorControllers.login);
 
+router.get('/profile/:id', doctorControllers.getProfile);
+
 router.use(checkAuth);
 
 router.patch('/:doctorId', doctorControllers.editInfo);

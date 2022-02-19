@@ -14,6 +14,8 @@ router.post(
 
 router.post('/login', patientControllers.login);
 
+router.get('/profile/:id', patientControllers.getProfile);
+
 router.use(checkAuth);
 
 router.patch('/:patientId', patientControllers.editInfo);
@@ -21,6 +23,7 @@ router.patch('/:patientId', patientControllers.editInfo);
 router.put('/:patientId', patientControllers.changePassword);
 
 router.get('/appointments', patientControllers.getAllAppointments);
+
 
 // id of doctor
 router.get("/chatInfo/:id", chatController.getChatInfo);
