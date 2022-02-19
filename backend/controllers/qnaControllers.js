@@ -215,6 +215,7 @@ exports.answerQuestion = async (req, res, next) => {
         _questionId: req.params.id,
         answer: req.body.answer,
         answeredBy: doctor.id,
+        doctorName: doctor.name,
         upvotes: [],
     });
 
