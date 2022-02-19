@@ -12,7 +12,7 @@ function ChatPage() {
 
   useEffect(() => {
     dispatch(createSocketConnection());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {}, [socket]);
 
