@@ -5,13 +5,6 @@ const Doctor = require("../models/doctor");
 const HttpError = require("../models/http-error");
 const mongoose = require("mongoose");
 
-// return next(
-//   new HttpError(
-//     'Invalid inputs passed, please check your data',
-//     422
-//   )
-// );
-
 const sort = (questions, sortBy) => {
     let filteredQuestionsSorted;
     if (sortBy === `dateAsc`) {
@@ -33,7 +26,6 @@ const sort = (questions, sortBy) => {
     }
     return filteredQuestionsSorted;
 };
-
 
 exports.getAllQuestion = async (req, res, next) => {
     let { category, sortBy } = req.query;
@@ -156,11 +148,6 @@ exports.askAQuestion = async (req, res, next) => {
         },
     });
 };
-
-// {
-//   path: "questions",
-//     select: "question _askerId",
-//     }
 exports.getQuestionsOfAnUser = async (req, res, next) => {
     let user;
     let id = req.params.id;
@@ -210,14 +197,28 @@ exports.answerQuestion = async (req, res, next) => {
         return next(new AppError("Unauthorized", 400));
     }
     const doctor = await Doctor.findById(req.userData.id);
-
-    const newAnswer = await Answer.create({
+    const quesId = req.params.id;
+    const newAnswer = new Answer({
         _questionId: req.params.id,
         answer: req.body.answer,
         answeredBy: doctor.id,
         doctorName: doctor.name,
         upvotes: [],
     });
+    try {
+        const session = await mongoose.startSession();
+        session.startTransaction();
+        await newAnswer.save({ session: session });
+        const question = await Question.findById(quesId);
+        question._answersId.push(newAnswer);
+        await question.save({ session: session });
+        await session.commitTransaction();
+    } catch (err) {
+        console.log(err.message);
+        const error = new HttpError("Failed to publish answer, please try again", 500);
+        return next(error);
+    }
+    
 
     res.status(201).json({
         message: "successful",

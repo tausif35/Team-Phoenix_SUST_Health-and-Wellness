@@ -30,5 +30,13 @@ const appointmentSchema = new Schema({
         type: String,
         default: ""
     },
+    tests: {
+        type: String,
+        default: ""
+    },
+    advice: {
+        type: String,
+        default: ""
+    },
 });
 module.exports = mongoose.model('Appointment', appointmentSchema);
