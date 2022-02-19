@@ -169,7 +169,7 @@ exports.login = async (req, res, next) => {
 };
 
 exports.getProfile = async (req, res, next) => {
-    const doctorId = req.params.doctorId;
+    const doctorId = req.params.id;
     let doctor;
     try {
         doctor = await Doctor.findById(doctorId);

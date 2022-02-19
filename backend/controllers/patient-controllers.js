@@ -139,7 +139,7 @@ exports.login = async (req, res, next) => {
 };
 
 exports.getProfile = async (req, res, next) => {
-    const patientId = req.params.patientId;
+    const patientId = req.params.id;
     let patient;
     try {
         patient = await Patient.findById(patientId);
