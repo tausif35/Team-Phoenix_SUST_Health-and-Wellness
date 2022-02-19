@@ -4,8 +4,10 @@ import React, { useEffect } from "react";
 import { getPatientAppointments } from "../../actions/appointmentActions";
 import { API_HOST, DELETE_APPOINTMENTS } from "../../constants/apiLinks";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function UserAppointments() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { loading, error, appointments } = useSelector(
     (state) => state.patientAppointmentList
@@ -32,6 +34,10 @@ function UserAppointments() {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleChatClick = (id) => {
+    navigate("/appointments/chat");
   };
 
   return (
@@ -64,10 +70,14 @@ function UserAppointments() {
                 </Typography>
               </Stack>
               <Typography variant="body1" fontWeight={"bold"}>
-                {item.appointmentTitle} asdasdasdasd
+                {item.appointmentTitle}
               </Typography>
               <Stack spacing={2}>
-                <Button fullWidth variant="contained">
+                <Button
+                  fullWidth
+                  variant="contained"
+                  onClick={() => handleChatClick(item._id)}
+                >
                   Chat
                 </Button>
                 <Button fullWidth variant="contained">

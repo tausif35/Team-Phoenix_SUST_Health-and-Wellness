@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const HttpError = require('../models/http-error');
 const Doctor = require('../models/doctor');
+const Appointment = require('../models/appointment');
 
 
 exports.signup = async (req, res, next) => {
@@ -91,6 +92,7 @@ exports.signup = async (req, res, next) => {
                 id: createdDoctor.id,
                 email: createdDoctor.email,
                 type: "doctor",
+                name: createdDoctor.name,
             },
             process.env.JWT_KEY,
             {
@@ -146,6 +148,7 @@ exports.login = async (req, res, next) => {
                 id: existingDoctor.id,
                 email: existingDoctor.email,
                 type: "doctor",
+                name: existingDoctor.name,
             },
             process.env.JWT_KEY,
             {
@@ -406,12 +409,9 @@ exports.getDoctor = async (req, res, next) => {
 exports.getAllAppointments = async (req, res, next) => {
     const doctorId = req.params.id ? req.params.id : req.userData.id;
     let doctor;
-    let detailedAppointmentStat;
+    let appointments;
     try {
-        doctor = await Doctor.findById(doctorId).populate('appointments');
-        detailedAppointmentStat = await doctor.appointments.map(appointment => {
-            appointment.toObject({ getters: true })
-        });
+        appointments = await Appointment.find({doctorId:doctorId}).populate('doctorId');
     } catch (error) {
         next(new HttpError("Something went wrong, could not get appointments.", 500));
     }
@@ -419,7 +419,7 @@ exports.getAllAppointments = async (req, res, next) => {
     res.status(200).json({
         data: {
             doctor: doctor.toObject({ getters: true }),
-            detailedAppointmentStat
+            appointments: appointments.map(appointment => appointment.toObject({ getters: true }))
         }
     });
 }
