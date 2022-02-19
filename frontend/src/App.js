@@ -15,8 +15,17 @@ import SingleBlogPage from "./pages/SingleBlogPage";
 import SmartDetectPage from "./pages/SmartDetect";
 import PrescriptionDownloadPage from "./pages/PrescriptionDownloadPage";
 import ChatPage from "./pages/ChatPage";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { createSocketConnection } from "./actions/socketActions";
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(createSocketConnection());
+  }, [dispatch]);
+
   return (
     <>
       <Navbar />
