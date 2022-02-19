@@ -13,6 +13,8 @@ import SingleQnAPage from "./pages/SingleQnAPage";
 import BlogCreatePage from "./pages/BlogCreatePage";
 import SingleBlogPage from "./pages/SingleBlogPage";
 import SmartDetectPage from "./pages/SmartDetect";
+import PrescriptionDownloadPage from "./pages/PrescriptionDownloadPage";
+
 
 function App() {
   return (

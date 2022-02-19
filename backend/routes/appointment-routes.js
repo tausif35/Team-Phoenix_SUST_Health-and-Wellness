@@ -8,10 +8,11 @@ const checkAuth = require('../middleware/check-auth');
 router.use(checkAuth);
 
 router.get('/', appointmentController.getAllAppointments);
+router.get('/prescription/:id', appointmentController.getPrescription);
 
 router.post('/', appointmentController.createAppointment);
 
-router.patch('/:id', appointmentController.addPescription);
+router.patch('/prescription/:id', appointmentController.addPescriptionInfo);
 router.delete('/:id', appointmentController.cancelAppointment);
 
 module.exports = router;
