@@ -6,6 +6,7 @@ import {
   Chip,
   Typography,
 } from "@mui/material";
+import moment from "moment";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { API_HOST } from "../../constants/apiLinks";
@@ -34,6 +35,12 @@ function BlogListItem({ item }) {
 
           <Typography variant="body1" mb={2}>
             by {item.authorName}
+          </Typography>
+
+          <Typography variant="body2" mb={2}>
+            {moment(Number(item.createdAt)).format(
+              "dddd, MMMM Do, YYYY, h:mm a"
+            )}
           </Typography>
 
           <Typography variant="body1" mb={2}>

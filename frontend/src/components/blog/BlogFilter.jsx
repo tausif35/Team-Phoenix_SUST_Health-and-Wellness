@@ -6,13 +6,8 @@ import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 import { Button, Divider, MenuItem, Stack, TextField } from "@mui/material";
-import {
-  blogCategories,
-  blogSortBy,
-  questionCategories,
-} from "../../utils/categoryList";
+import { blogCategories, blogSortBy } from "../../utils/categoryList";
 import { useDispatch } from "react-redux";
-import { getQuestionList } from "../../actions/queAnsActions";
 import { getBlogList } from "../../actions/blogActions";
 
 const Accordion = styled((props) => (
