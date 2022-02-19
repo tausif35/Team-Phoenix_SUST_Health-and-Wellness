@@ -12,6 +12,7 @@ import BlogsPage from "./pages/BlogsPage";
 import SingleQnAPage from "./pages/SingleQnAPage";
 import BlogCreatePage from "./pages/BlogCreatePage";
 import SingleBlogPage from "./pages/SingleBlogPage";
+import SmartDetectPage from "./pages/SmartDetect";
 
 function App() {
   return (
@@ -28,6 +29,11 @@ function App() {
         <Route path="/blogs" element={<BlogsPage />} />
         <Route path="/blogs/:blogId" element={<SingleBlogPage />} />
         <Route path="/blogs/create" element={<BlogCreatePage />} />
+
+
+        <Route path="/detect" element={<SmartDetectPage />} />
+
+
 
         <Route path="/sign-up" element={<RegisterPage />} />
         <Route path="/sign-in" element={<LoginPage />} />
