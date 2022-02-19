@@ -30,8 +30,8 @@ export const questionCategories = ["Diet", "Fitness", "Health", "Vaccine"];
 export const questionSortBy = [
   { valueText: "Newest", value: "dateDesc" },
   { valueText: "Oldest", value: "dateAsc" },
-  { valueText: "Highest Rated", value: "upvotesDesc" },
-  { valueText: "Lowest Rated", value: "upvotesAsc" },
+  { valueText: "Most Answered", value: "ansDesc" },
+  { valueText: "Least Answered", value: "ansAsc" },
 ];
 
 export const blogCategories = ["Diet", "Fitness", "Health", "Vaccine", "Test"];

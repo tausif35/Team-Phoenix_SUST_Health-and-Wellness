@@ -6,6 +6,7 @@ import {
   blogListReducer,
   personalBlogsReducer,
   postBlogReducer,
+  singleBlogCommentsReducer,
   singleBlogReducer,
   writeBlogCommentReducer,
 } from "./reducers/blogReducer";
@@ -41,6 +42,7 @@ const reducer = combineReducers({
   postBlog: postBlogReducer,
   blogList: blogListReducer,
   singleBlog: singleBlogReducer,
+  singleBlogComments: singleBlogCommentsReducer,
   personalBlogs: personalBlogsReducer,
   writeBlogComment: writeBlogCommentReducer,
 });

@@ -37,4 +37,10 @@ export const POST_BLOG = `${API_HOST}/api/blogs/write`;
 
 export const POST_BLOG_COMMENT = `${API_HOST}/api/blogs/comment`;
 
+export const UPVOTE_BLOG = `${API_HOST}/api/blogs/upvote`;
+
+export const GET_BLOG_COMMENTS = `${API_HOST}/api/blogs/comment`;
+
 export const GET_PERSONAL_BLOGS = `${API_HOST}/api/blogs/doctor`;
+
+export const GET_DOCTOR_AVAILABLE_APPOINTMENTS = `${API_HOST}/api/doctors`;
