@@ -13,11 +13,8 @@ const appointmentSchema = new Schema({
         ref: "Patient",
         required: [true, "An appointment must have a patient"],
     },
-    doctorName: String,
-    patientName: String,
-    phoneNo: String,
-    email: String,
     title: String,
+    timeStamp: String,
     date: {
         type: String,
     },

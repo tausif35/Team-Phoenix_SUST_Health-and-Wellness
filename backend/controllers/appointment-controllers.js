@@ -8,7 +8,7 @@ const timeSlots = require('../utils/timeSlots');
 exports.getAllAppointments = async (req, res, next) => {
   let appointments;
   try {
-    appointments = await Appointment.find();
+    appointments = await Appointment.find().populate('doctorId');
   } catch (error) {
     return next(new HttpError('Something went wrong, could not get appointments', 500));
   }
@@ -20,24 +20,18 @@ exports.createAppointment = async (req, res, next) => {
   const {
     doctorId,
     patientId,
-    doctorName,
-    patientName,
-    phoneNo,
-    email,
+    title,
+    timeStamp,
     date,
     time,
-    diagnosis
   } = req.body;
   const createdAppointment = new Appointment({
     doctorId,
     patientId,
-    doctorName,
-    patientName,
-    phoneNo,
-    email,
+    title,
+    timeStamp,
     date,
-    time,
-    diagnosis
+    time
   });
   try {
     const doctor = await Doctor.findById(doctorId);
