@@ -31,6 +31,6 @@ const doctorSchema = new Schema({
   ]
 });
 
-doctorSchema.plugin(uniqueValidator);
+// doctorSchema.plugin(uniqueValidator);
 
 module.exports = mongoose.model('Doctor', doctorSchema);
