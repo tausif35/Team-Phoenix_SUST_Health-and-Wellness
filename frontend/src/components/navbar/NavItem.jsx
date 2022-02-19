@@ -17,7 +17,7 @@ const StyledNavLink = styled(NavLink)`
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: black;
+    background-color: #1976d2;
     transition: all 0.5s ease;
     transform: scaleX(0);
   }

@@ -64,9 +64,12 @@ function SetAppointment({ selectedDoctor }) {
           {
             doctorId: selectedDoctor._id,
             date: moment(newValue).format("YYYY-MM-DD"),
+            timestamp: moment(newValue).valueOf(),
           },
           config
         );
+
+        console.log(moment(newValue).valueOf());
 
         setAvailableTimeSlots(res.data.times);
         setAppointmentTime("");

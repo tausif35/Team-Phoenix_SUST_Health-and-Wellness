@@ -55,4 +55,4 @@ export const CANCEL_APPOINTMENTS = `${API_HOST}/api/appointments`;
 
 export const GET_PATIENT_APPOINTMENTS = `${API_HOST}/api/patients/appointments`;
 
-export const GET_DELETE_APPOINTMENTS = `${API_HOST}/api/appointments`;
+export const DELETE_APPOINTMENTS = `${API_HOST}/api/appointments`;
