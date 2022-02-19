@@ -22,7 +22,7 @@ const blogSchema = new mongoose.Schema(
         blogCategory: {
             type: String
         },
-
+        createdAt: { type: String, default: Date.now },
         doctorId: {
             type: mongoose.Schema.ObjectId,
             ref: "Doctor",

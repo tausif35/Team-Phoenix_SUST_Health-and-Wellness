@@ -56,8 +56,8 @@ function UpdateProfile() {
     name: "",
     email: "",
     gender: "Male",
-    dateOfBirth: Date.now(),
-    phone: "01837735998",
+    dateOfBirth: "",
+    phoneNo: "",
     password: "",
     confirmPassword: "",
   });
@@ -73,12 +73,7 @@ function UpdateProfile() {
       if (!(user && Object.keys(user).length)) {
         dispatch(getUserDetails());
       } else {
-        setValues({
-          ...values,
-          _id: user._id,
-          name: user.name,
-          email: user.email,
-        });
+        setValues({ ...user });
       }
     } else {
       navigate("/sign-in");
@@ -110,7 +105,7 @@ function UpdateProfile() {
       ...user,
       gender: "Male",
       dateOfBirth: Date.now(),
-      phone: "01837735998",
+      phoneNo: "01837735998",
       password: "",
       confirmPassword: "",
     });
@@ -228,46 +223,48 @@ function UpdateProfile() {
             disabled={!inEditMode}
             label="Phone Number"
             type={"tel"}
-            error={valueMissing && !values.phone}
+            error={valueMissing && !values.phoneNo}
             helperText={
-              valueMissing && !values.phone
+              valueMissing && !values.phoneNo
                 ? "Please enter your phone number"
                 : ""
             }
-            value={values.phone}
+            value={values.phoneNo}
             onChange={handleChange("phone")}
           />
         </Grid>
 
-        <Grid item xs={1}>
-          <LocalizationProvider dateAdapter={DateAdapter}>
-            <DatePicker
-              disableFuture
-              disabled={!inEditMode}
-              label="Date of Birth"
-              value={values.dateOfBirth}
-              onChange={(newValue) =>
-                setValues({ ...values, dateOfBirth: newValue })
-              }
-              renderInput={(params) => (
-                <StyledTextField
-                  {...params}
-                  fullWidth
-                  variant={inEditMode ? "outlined" : "standard"}
-                  error={valueMissing && !values.dateOfBirth}
-                  helperText={
-                    valueMissing && !values.dateOfBirth
-                      ? "Please enter your date of birth"
-                      : ""
-                  }
-                  sx={{
-                    svg: { display: !inEditMode && "none" },
-                  }}
-                />
-              )}
-            />
-          </LocalizationProvider>
-        </Grid>
+        {userInfo.role === "user" && (
+          <Grid item xs={1}>
+            <LocalizationProvider dateAdapter={DateAdapter}>
+              <DatePicker
+                disableFuture
+                disabled={!inEditMode}
+                label="Date of Birth"
+                value={values.dateOfBirth}
+                onChange={(newValue) =>
+                  setValues({ ...values, dateOfBirth: newValue })
+                }
+                renderInput={(params) => (
+                  <StyledTextField
+                    {...params}
+                    fullWidth
+                    variant={inEditMode ? "outlined" : "standard"}
+                    error={valueMissing && !values.dateOfBirth}
+                    helperText={
+                      valueMissing && !values.dateOfBirth
+                        ? "Please enter your date of birth"
+                        : ""
+                    }
+                    sx={{
+                      svg: { display: !inEditMode && "none" },
+                    }}
+                  />
+                )}
+              />
+            </LocalizationProvider>
+          </Grid>
+        )}
 
         {inEditMode && (
           <Grid item xs={1}>

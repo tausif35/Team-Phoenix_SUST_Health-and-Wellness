@@ -28,7 +28,7 @@ exports.createBlog = async (req, res, next) => {
         photo: imgPath,
         upvotes: []
     });
-
+    console.log();
     let doctor;
     try {
         doctor = await Doctor.findById(userId);
@@ -65,7 +65,7 @@ exports.createBlog = async (req, res, next) => {
 };
 
 exports.getAllBlogs = async (req, res, next) => {
-    const { category } = req.query;
+    let { category, sortBy } = req.query;
 
     let blogs;
     let filteredBlogs;
@@ -86,8 +86,34 @@ exports.getAllBlogs = async (req, res, next) => {
         console.log(error.message)
         return next(new HttpError("Something Went Wrong", 401));
     }
-
-
+    if(!sortBy){
+        // sortBy = "dateAsc";
+        sortBy = "dateDesc";
+    }
+    // 1645251244065
+    // 1645251220511
+    let filteredBlogsSorted;
+    if (sortBy === "upvotesAsc") {
+        filteredBlogsSorted=filteredBlogs.sort((a, b) => {
+            return a.upvotes.length - b.upvotes.length
+        })
+    } else if(sortBy === "upvotesDesc") {
+        filteredBlogsSorted= filteredBlogs.sort((a, b) => {
+            return b.upvotes.length - a.upvotes.length
+        })
+    }else if(sortBy ===`dateAsc`){ 
+        filteredBlogsSorted = filteredBlogs.sort((a, b) => {
+            return Number(a.createdAt) - Number(b.createdAt)
+        })
+    }else if(sortBy ===`dateDesc`){
+        filteredBlogsSorted = filteredBlogs.sort((a, b) => {
+            return  Number(b.createdAt) - Number(a.createdAt)
+        })
+    }
+    filteredBlogs = filteredBlogsSorted;
+    // filteredBlogs.sort(function (blog1, blog2) {
+    //     return x.timestamp - y.timestamp;
+    // })
     res.status(200).json({
         message: "successful",
         No_of_blogs: blogs.length,

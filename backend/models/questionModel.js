@@ -18,7 +18,7 @@ const questionSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "Patient",
     },
-
+    createdAt: { type: String, default: Date.now },
     askedBy: {
       type: String,
       default: "anonymous",

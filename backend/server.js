@@ -2,6 +2,7 @@
 const fs = require("fs");
 const path = require("path");
 const cors = require("cors");
+const morgan = require("morgan");
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -23,6 +24,10 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 
 app.use(bodyParser.json());
+
+//logger middleware
+app.use(morgan("tiny"));
+
 app.use("/public/uploads", express.static(path.join("public", "uploads")));
 
 app.use("/api/patients", patientRoutes);

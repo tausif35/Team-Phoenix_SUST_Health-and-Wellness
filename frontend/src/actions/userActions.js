@@ -6,6 +6,7 @@ import {
   UPDATE_USER_PROFILE,
   POST_DOCTOR_REGISTER,
   POST_DOCTOR_LOGIN,
+  GET_DOCTOR_PROFILE,
 } from "../constants/apiLinks";
 import {
   USER_LOGIN_FAIL,
@@ -115,12 +116,23 @@ export const getUserDetails = () => async (dispatch, getState) => {
         Authorization: `Bearer ${userInfo.token}`,
       },
     };
-    const res = await axios.get(GET_USER_PROFILE, config);
 
-    dispatch({
-      type: USER_DETAILS_SUCCESS,
-      payload: res.data,
-    });
+    const reqLink =
+      userInfo.role === "doctor" ? GET_DOCTOR_PROFILE : GET_USER_PROFILE;
+
+    const res = await axios.get(`${reqLink}/${userInfo.id}`, config);
+
+    if (userInfo.role === "doctor") {
+      dispatch({
+        type: USER_DETAILS_SUCCESS,
+        payload: res.data.doctor,
+      });
+    } else {
+      dispatch({
+        type: USER_DETAILS_SUCCESS,
+        payload: res.data.patient,
+      });
+    }
   } catch (error) {
     dispatch({
       type: USER_DETAILS_FAIL,

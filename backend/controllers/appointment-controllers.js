@@ -3,6 +3,7 @@ const Appointment = require('../models/appointment');
 const Doctor = require('../models/doctor');
 const Patient = require('../models/patient');
 const mongoose = require('mongoose');
+
 const { PDFDocument } = require('pdf-lib');
 const fs = require('fs');
 const path = require('path');
@@ -43,10 +44,13 @@ async function generatePrescription(appointment) {
 }
 
 
+const timeSlots = require('../utils/timeSlots');
+
+
 exports.getAllAppointments = async (req, res, next) => {
   let appointments;
   try {
-    appointments = await Appointment.find();
+    appointments = await Appointment.find().populate('doctorId');
   } catch (error) {
     return next(new HttpError('Something went wrong, could not get appointments', 500));
   }
@@ -58,24 +62,18 @@ exports.createAppointment = async (req, res, next) => {
   const {
     doctorId,
     patientId,
-    doctorName,
-    patientName,
-    phoneNo,
-    email,
+    title,
+    timeStamp,
     date,
     time,
-    diagnosis
   } = req.body;
   const createdAppointment = new Appointment({
     doctorId,
     patientId,
-    doctorName,
-    patientName,
-    phoneNo,
-    email,
+    title,
+    timeStamp,
     date,
-    time,
-    diagnosis
+    time
   });
   try {
     const doctor = await Doctor.findById(doctorId);
@@ -130,56 +128,84 @@ exports.addPescriptionInfo = async (req, res, next) => {
   res.status(200).json({ appointment: appointment.toObject({ getters: true }) });
 };
 
-exports.getPrescription = async (req, res, next) => {
-  const { id } = req.params;
-  let appointment;
-  try {
-    appointment = await Appointment.findById(id)
-  } catch (error) {
-    return next(new HttpError('Something went wrong, could not download prescription', 500));
-  }
-  if (!appointment) {
-    return next(new HttpError('Could not find appointment for this id', 404));
-  }
+// exports.getPrescription = async (req, res, next) => {
+//   const { id } = req.params;
+//   let appointment;
+//   try {
+//     appointment = await Appointment.findById(id)
+//   } catch (error) {
+//     return next(new HttpError('Something went wrong, could not download prescription', 500));
+//   }
+//   if (!appointment) {
+//     return next(new HttpError('Could not find appointment for this id', 404));
+//   }
+
 
   generatePrescription(appointment).catch(err => console.log(err));
 
 
   res.status(200).json({ diagnosis: appointment.diagnosis, tests: appointment.tests, advice: appointment.advice });
 
-}
+//   res.status(200).json({ diagnosis: appointment.diagnosis, tests: appointment.tests, advice: appointment.advice });
+
+
+// }
 
 
 exports.cancelAppointment = async (req, res, next) => {
-  const { id } = req.params;
-  let appointment;
-  try {
-    appointment = await Appointment.findById(id).populate('doctorId')
-      .populate('patientId');
-  } catch (error) {
-    return next(new HttpError('Something went wrong, could not delete appointment', 500));
-  }
-  if (!appointment) {
-    return next(new HttpError('Could not find appointment for this id', 404));
-  }
-  const doctor = appointment.doctorId.id;
-  const patient = appointment.patientId.id;
-  const user = req.userData.id;
-  if (user !== doctor && user !== patient) {
-    return next(new HttpError('You are not authorized to perform this action', 401));
-  }
-  try {
-    const session = await mongoose.startSession();
-    session.startTransaction();
-    await appointment.remove({ session: session });
-    appointment.doctorId.appointments.pull(appointment);
-    await appointment.doctorId.save({ session: session });
-    appointment.patientId.appointments.pull(appointment);
-    await appointment.patientId.save({ session: session });
-    await session.commitTransaction();
-  } catch (error) {
-    console.log(error.message);
-    return next(new HttpError('Something went wrong, could not create appointment', 500));
-  }
-  res.status(200).json({ message: 'Appointment deleted' });
+    const { id } = req.params;
+    let appointment;
+    try {
+        appointment = await Appointment.findById(id).populate('doctorId')
+            .populate('patientId');
+    } catch (error) {
+        return next(new HttpError('Something went wrong, could not delete appointment', 500));
+    }
+    if (!appointment) {
+        return next(new HttpError('Could not find appointment for this id', 404));
+    }
+    const doctor = appointment.doctorId.id;
+    const patient = appointment.patientId.id;
+    const user = req.userData.id;
+    if (user !== doctor && user !== patient) {
+        return next(new HttpError('You are not authorized to perform this action', 401));
+    }
+    try {
+        const session = await mongoose.startSession();
+        session.startTransaction();
+        await appointment.remove({ session: session });
+        appointment.doctorId.appointments.pull(appointment);
+        await appointment.doctorId.save({ session: session });
+        appointment.patientId.appointments.pull(appointment);
+        await appointment.patientId.save({ session: session });
+        await session.commitTransaction();
+    } catch (error) {
+        console.log(error.message);
+        return next(new HttpError('Something went wrong, could not create appointment', 500));
+    }
+    res.status(200).json({ message: 'Appointment deleted' });
 }
+
+exports.getAppointmentSlots = async (req, res, next) => {
+    const { doctorId, date } = req.body;
+    let doctor;
+    try {
+        doctor = await Doctor.findById(doctorId).populate('appointments');
+    } catch (error) {
+        return next(new HttpError('Something went wrong, could not get doctor', 500));
+    }
+    if (!doctor) {
+        return next(new HttpError('Could not find doctor for this id', 404));
+    }
+    let times = [];
+    for (let i = 0; i < doctor.appointments.length; i++) {
+        if (doctor.appointments[i].date === date) {
+            times.push(doctor.appointments[i].time);
+        }
+    }
+    // console.log(times);
+    slots = timeSlots.getSlots(times);
+    res.status(200).json({
+        times: slots
+    });
+};

@@ -2,15 +2,118 @@ import {
   Avatar,
   Button,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
+  MenuItem,
   Stack,
+  TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
-import { API_HOST } from "../../constants/apiLinks";
+import React, { useEffect, useState } from "react";
+import {
+  API_HOST,
+  GET_DOCTOR_AVAILABLE_APPOINTMENTS,
+  POST_APPOINTMENTS,
+} from "../../constants/apiLinks";
+import { LocalizationProvider, StaticDatePicker } from "@mui/lab";
+import AdapterMoment from "@mui/lab/AdapterMoment";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import moment from "moment";
+import { useDispatch } from "react-redux";
+import { getUserDetails } from "../../actions/userActions";
 
 function SetAppointment({ selectedDoctor }) {
+  const dispatch = useDispatch();
+
+  const [valueMissing, setValueMissing] = useState(false);
   const [openAppointment, setOpenAppointment] = useState(false);
+  const [appointmentDate, setAppointmentDate] = useState("");
+  const [appointmentTime, setAppointmentTime] = useState("");
+  const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
+
+  const { userInfo } = useSelector((state) => state.userLogin);
+  const { loading, user } = useSelector((state) => state.userDetails);
+
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${userInfo.token}`,
+    },
+  };
+
+  useEffect(() => {
+    dispatch(getUserDetails());
+  }, []);
+
+  const handleDialogClose = () => {
+    setAppointmentDate("");
+    setAppointmentTime("");
+    setAvailableTimeSlots([]);
+    setOpenAppointment(false);
+  };
+
+  const handleDateChange = async (newValue) => {
+    if (newValue) {
+      try {
+        const res = await axios.post(
+          `${GET_DOCTOR_AVAILABLE_APPOINTMENTS}`,
+          {
+            doctorId: selectedDoctor._id,
+            date: moment(newValue).format("YYYY-MM-DD"),
+          },
+          config
+        );
+
+        setAvailableTimeSlots(res.data.times);
+        setAppointmentTime("");
+      } catch (error) {
+        console.log(
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message
+        );
+      }
+    }
+    setAppointmentDate(newValue);
+  };
+
+  const handleSetAppointment = async () => {
+    if (appointmentDate && appointmentTime) {
+      console.log(
+        moment(appointmentDate).format("YYYY-MM-DD") + " " + appointmentTime
+      );
+
+      try {
+        const res = await axios.post(
+          `${POST_APPOINTMENTS}`,
+          {
+            doctorId: selectedDoctor._id,
+            patientId: userInfo.id,
+            doctorName: selectedDoctor.name,
+            doctorProfileImage: selectedDoctor.profileImage,
+            patientName: user.name,
+            email: selectedDoctor.email,
+            phoneNo: selectedDoctor.phoneNo,
+            date: moment(appointmentDate).format("YYYY-MM-DD"),
+            time: appointmentTime,
+          },
+          config
+        );
+
+        console.log(res);
+
+        handleDialogClose();
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      setValueMissing(true);
+    }
+  };
 
   return (
     <Stack spacing={5}>
@@ -85,11 +188,66 @@ function SetAppointment({ selectedDoctor }) {
         </Typography>
       </Stack>
 
+      <Dialog fullWidth open={openAppointment} onClose={handleDialogClose}>
+        <DialogTitle>Pick Appointment</DialogTitle>
+
+        <DialogContent>
+          <Stack spacing={4} py={1}>
+            <LocalizationProvider dateAdapter={AdapterMoment}>
+              <StaticDatePicker
+                orientation="landscape"
+                openTo="day"
+                disablePast
+                value={appointmentDate}
+                onChange={handleDateChange}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    error={valueMissing && !appointmentDate}
+                    helperText={
+                      valueMissing && !appointmentDate
+                        ? "Please pick an appointment date"
+                        : ""
+                    }
+                  />
+                )}
+              />
+            </LocalizationProvider>
+
+            <TextField
+              fullWidth
+              variant="outlined"
+              label="Available Time Slots"
+              select
+              value={appointmentTime}
+              onChange={(e) => setAppointmentTime(e.target.value)}
+              error={valueMissing && !appointmentTime}
+              helperText={
+                valueMissing && !appointmentTime
+                  ? "Please pick an appointment time"
+                  : ""
+              }
+            >
+              {availableTimeSlots.map((option, index) => (
+                <MenuItem key={index} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Stack>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={handleDialogClose}>Cancel</Button>
+          <Button onClick={handleSetAppointment}>Set Appointment</Button>
+        </DialogActions>
+      </Dialog>
+
       <Button
         variant="contained"
         onClick={(e) => setOpenAppointment(!openAppointment)}
       >
-        {openAppointment ? "Cancel" : "Select Appointment"}
+        Pick Appointment
       </Button>
     </Stack>
   );

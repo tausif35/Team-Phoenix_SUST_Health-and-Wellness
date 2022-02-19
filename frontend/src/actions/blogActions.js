@@ -1,5 +1,6 @@
 import axios from "axios";
 import {
+  GET_BLOG_COMMENTS,
   GET_BLOG_LIST,
   GET_PERSONAL_BLOGS,
   GET_SINGLE_BLOG,
@@ -10,6 +11,9 @@ import {
   GET_BLOGS_FAIL,
   GET_BLOGS_REQUEST,
   GET_BLOGS_SUCCESS,
+  GET_BLOG_COMMENTS_FAIL,
+  GET_BLOG_COMMENTS_REQUEST,
+  GET_BLOG_COMMENTS_SUCCESS,
   GET_PERSONAL_BLOGS_FAIL,
   GET_PERSONAL_BLOGS_REQUEST,
   GET_PERSONAL_BLOGS_SUCCESS,
@@ -100,7 +104,7 @@ export const getBlogList = (filter) => async (dispatch, getState) => {
     };
 
     const res = await axios.get(
-      `${GET_BLOG_LIST}?category=${filter.category}`,
+      `${GET_BLOG_LIST}?category=${filter.category}&sortBy=${filter.sortBy}`,
       config
     );
 
@@ -138,7 +142,7 @@ export const getSingleBlog = (id) => async (dispatch, getState) => {
 
     dispatch({
       type: GET_SINGLE_BLOG_SUCCESS,
-      payload: res.data.data.filteredBlogs,
+      payload: res.data.data.blog,
     });
   } catch (error) {
     dispatch({
@@ -178,20 +182,14 @@ export const postBlogComment =
         payload: res.data.data.newComment,
       });
 
-      // const {
-      //   singleBlog: { blog },
-      // } = getState();
+      const {
+        singleBlogComments: { blogComments },
+      } = getState();
 
-      // dispatch({
-      //   type: GET_SINGLE_QUESTION_SUCCESS,
-      //   payload: {
-      //     ...question,
-      //     BLOG_COMMENTs: [
-      //       ...question.BLOG_COMMENTs,
-      //       res.data.data.newBLOG_COMMENT,
-      //     ],
-      //   },
-      // });
+      dispatch({
+        type: GET_BLOG_COMMENTS_SUCCESS,
+        payload: [...blogComments, res.data.data.newComment],
+      });
     } catch (error) {
       dispatch({
         type: POST_BLOG_COMMENT_FAIL,
@@ -227,6 +225,38 @@ export const getPersonalBlogs = () => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: GET_PERSONAL_BLOGS_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const getBlogComments = (blogId) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: GET_BLOG_COMMENTS_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const res = await axios.get(`${GET_BLOG_COMMENTS}/${blogId}`, config);
+
+    dispatch({
+      type: GET_BLOG_COMMENTS_SUCCESS,
+      payload: res.data.data.comments,
+    });
+  } catch (error) {
+    dispatch({
+      type: GET_BLOG_COMMENTS_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message

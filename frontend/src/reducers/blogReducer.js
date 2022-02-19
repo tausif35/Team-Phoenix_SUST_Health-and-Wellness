@@ -2,6 +2,9 @@ import {
   GET_BLOGS_FAIL,
   GET_BLOGS_REQUEST,
   GET_BLOGS_SUCCESS,
+  GET_BLOG_COMMENTS_FAIL,
+  GET_BLOG_COMMENTS_REQUEST,
+  GET_BLOG_COMMENTS_SUCCESS,
   GET_PERSONAL_BLOGS_FAIL,
   GET_PERSONAL_BLOGS_REQUEST,
   GET_PERSONAL_BLOGS_SUCCESS,
@@ -50,6 +53,22 @@ export const singleBlogReducer = (state = {}, action) => {
       return { loading: false, blog: action.payload };
     case GET_SINGLE_BLOG_FAIL:
       return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const singleBlogCommentsReducer = (
+  state = { blogComments: [] },
+  action
+) => {
+  switch (action.type) {
+    case GET_BLOG_COMMENTS_REQUEST:
+      return { loading: true, blogComments: [] };
+    case GET_BLOG_COMMENTS_SUCCESS:
+      return { loading: false, blogComments: action.payload };
+    case GET_BLOG_COMMENTS_FAIL:
+      return { loading: false, blogComments: [], error: action.payload };
     default:
       return state;
   }
