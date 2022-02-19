@@ -32,6 +32,7 @@ const Image = styled.img`
 
 const Title = styled.h1`
   font-size: 3rem;
+  color: white;
 `;
 
 const Description = styled.p`
@@ -55,7 +56,7 @@ function SliderItem({ item }) {
         <Image src={item.image} />
       </ImgContainer>
       <InfoContainer>
-        <Typography variant="h4">{item.title}</Typography>
+        <Typography variant="h4" color="white">{item.title}</Typography>
       </InfoContainer>
     </Container>
   );

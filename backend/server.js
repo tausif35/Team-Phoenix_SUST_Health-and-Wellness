@@ -8,15 +8,13 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const HttpError = require("./models/http-error");
 const qnaRoutes = require("./routes/qnaRoutes");
-const blogRoutes = require('./routes/blogRoutes');
+const blogRoutes = require("./routes/blogRoutes");
 const doctorRoutes = require("./routes/doctor-routes");
 const patientRoutes = require("./routes/patient-routes");
 const generalRoutes = require("./routes/general-routes");
 const appointmentRoutes = require("./routes/appointment-routes");
 
 require("dotenv").config();
-
-
 
 const app = express();
 const port = process.env.PORT || 5000;

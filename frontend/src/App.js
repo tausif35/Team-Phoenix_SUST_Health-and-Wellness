@@ -13,8 +13,9 @@ import SingleQnAPage from "./pages/SingleQnAPage";
 import BlogCreatePage from "./pages/BlogCreatePage";
 import SingleBlogPage from "./pages/SingleBlogPage";
 import SmartDetectPage from "./pages/SmartDetect";
+import VideoChatPage from "./pages/VideoChat/VideoChatPage";
 import PrescriptionDownloadPage from "./pages/PrescriptionDownloadPage";
-
+import ChatPage from "./pages/ChatPage";
 
 function App() {
   return (
@@ -24,6 +25,9 @@ function App() {
         <Route path="/" element={<Navigate replace to="/home" />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/appointments" element={<AppointmentPage />} />
+        <Route path="/appointments/chat" element={<ChatPage />} />
+
+        <Route path="/videoChat" element={<VideoChatPage />} />
 
         <Route path="/q-a" element={<QueAnsPage />} />
         <Route path="/q-a/:questionId" element={<SingleQnAPage />} />
@@ -32,10 +36,7 @@ function App() {
         <Route path="/blogs/:blogId" element={<SingleBlogPage />} />
         <Route path="/blogs/create" element={<BlogCreatePage />} />
 
-
         <Route path="/detect" element={<SmartDetectPage />} />
-
-
 
         <Route path="/sign-up" element={<RegisterPage />} />
         <Route path="/sign-in" element={<LoginPage />} />

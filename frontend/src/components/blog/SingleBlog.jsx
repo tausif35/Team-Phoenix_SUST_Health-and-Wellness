@@ -36,7 +36,6 @@ function SingleBlog({ item, userInfo }) {
   const [upvotes, setUpvotes] = useState(item.upvotes.length);
 
   const handleUpVoteClick = async () => {
-    console.log(item.upvotes.includes(userInfo.id));
     try {
       const res = await axios.post(
         `${UPVOTE_BLOG}/${item._id}`,
@@ -98,6 +97,7 @@ function SingleBlog({ item, userInfo }) {
         <Button
           onClick={handleUpVoteClick}
           variant={isUpVoted ? "contained" : "outlined"}
+          sx={{ width: "20%" }}
         >
           <ThumbUp />
         </Button>

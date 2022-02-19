@@ -2,6 +2,7 @@ import { SearchOutlined } from "@mui/icons-material";
 import {
   Autocomplete,
   Button,
+  IconButton,
   Paper,
   Stack,
   TextField,
@@ -27,7 +28,14 @@ function DoctorSearchBar() {
   };
 
   return (
-    <Paper sx={{ width: "100%", maxWidth: "1000px", alignSelf: "center" }}>
+    <Paper
+      sx={{
+        width: "100%",
+        maxWidth: "1000px",
+        alignSelf: "center",
+        borderRadius: "100px",
+      }}
+    >
       <Stack
         direction={{ xs: "column", md: "row" }}
         spacing={2}
@@ -42,6 +50,7 @@ function DoctorSearchBar() {
           variant="outlined"
           label="Doctor's Name"
           type={"text"}
+          size="small"
           value={doctorName}
           onChange={(e) => setDoctorName(e.target.value)}
         />
@@ -54,14 +63,18 @@ function DoctorSearchBar() {
             setSpeciality(values ? values : "");
           }}
           renderInput={(params) => (
-            <TextField {...params} variant="outlined" label="Specialization" />
+            <TextField
+              {...params}
+              variant="outlined"
+              label="Specialization"
+              size="small"
+            />
           )}
         />
 
-        <Button fullWidth variant="contained" onClick={handleSearchClick}>
-          Search
-          <SearchOutlined sx={{ ml: 2 }} />
-        </Button>
+        <IconButton color="primary" onClick={handleSearchClick} size="large">
+          <SearchOutlined />
+        </IconButton>
       </Stack>
     </Paper>
   );

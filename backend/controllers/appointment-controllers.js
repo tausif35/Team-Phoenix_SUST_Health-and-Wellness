@@ -1,12 +1,12 @@
-const HttpError = require('../models/http-error');
-const Appointment = require('../models/appointment');
-const Doctor = require('../models/doctor');
-const Patient = require('../models/patient');
-const mongoose = require('mongoose');
+const HttpError = require("../models/http-error");
+const Appointment = require("../models/appointment");
+const Doctor = require("../models/doctor");
+const Patient = require("../models/patient");
+const mongoose = require("mongoose");
 
-const { PDFDocument } = require('pdf-lib');
-const fs = require('fs');
-const path = require('path');
+const { PDFDocument } = require("pdf-lib");
+const fs = require("fs");
+const path = require("path");
 
 async function generatePrescription(appointment) {
     // Create a new document and add a new page
@@ -41,11 +41,10 @@ async function generatePrescription(appointment) {
     const pdfBytes = pdfDoc.save()
     //Write the PDF to a file
     fs.writeFileSync(prescStorage + `/${appointment.id}_prescription.pdf`, await pdfDoc.save());
+
 }
 
-
-const timeSlots = require('../utils/timeSlots');
-
+const timeSlots = require("../utils/timeSlots");
 
 exports.getAllAppointments = async (req, res, next) => {
     let appointments;
@@ -141,34 +140,42 @@ exports.getPrescription = async (req, res, next) => {
     }
 
 
-    generatePrescription(appointment).catch(err => console.log(err));
+    generatePrescription(appointment).catch((err) => console.log(err));
 
 
-    res.status(200).json({ diagnosis: appointment.diagnosis, tests: appointment.tests, advice: appointment.advice });
+    res
+        .status(200)
+        .json({
+            diagnosis: appointment.diagnosis,
+            tests: appointment.tests,
+            advice: appointment.advice,
+        });
 
     //   res.status(200).json({ diagnosis: appointment.diagnosis, tests: appointment.tests, advice: appointment.advice });
-
-
-}
-
+};
 
 exports.cancelAppointment = async (req, res, next) => {
     const { id } = req.params;
     let appointment;
     try {
-        appointment = await Appointment.findById(id).populate('doctorId')
-            .populate('patientId');
+        appointment = await Appointment.findById(id)
+            .populate("doctorId")
+            .populate("patientId");
     } catch (error) {
-        return next(new HttpError('Something went wrong, could not delete appointment', 500));
+        return next(
+            new HttpError("Something went wrong, could not delete appointment", 500)
+        );
     }
     if (!appointment) {
-        return next(new HttpError('Could not find appointment for this id', 404));
+        return next(new HttpError("Could not find appointment for this id", 404));
     }
     const doctor = appointment.doctorId.id;
     const patient = appointment.patientId.id;
     const user = req.userData.id;
     if (user !== doctor && user !== patient) {
-        return next(new HttpError('You are not authorized to perform this action', 401));
+        return next(
+            new HttpError("You are not authorized to perform this action", 401)
+        );
     }
     try {
         const session = await mongoose.startSession();
@@ -181,10 +188,12 @@ exports.cancelAppointment = async (req, res, next) => {
         await session.commitTransaction();
     } catch (error) {
         console.log(error.message);
-        return next(new HttpError('Something went wrong, could not create appointment', 500));
+        return next(
+            new HttpError("Something went wrong, could not create appointment", 500)
+        );
     }
-    res.status(200).json({ message: 'Appointment deleted' });
-}
+    res.status(200).json({ message: "Appointment deleted" });
+};
 
 exports.getAppointmentSlots = async (req, res, next) => {
     const { doctorId, date } = req.body;
@@ -211,6 +220,6 @@ exports.getAppointmentSlots = async (req, res, next) => {
     // console.log(times);
     slots = timeSlots.getSlots(times);
     res.status(200).json({
-        times: slots
+        times: slots,
     });
 };
