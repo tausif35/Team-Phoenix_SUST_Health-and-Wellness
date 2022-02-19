@@ -6,7 +6,11 @@ import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 import { Button, Divider, MenuItem, Stack, TextField } from "@mui/material";
-import { questionCategories } from "../../utils/categoryList";
+import {
+  blogCategories,
+  blogSortBy,
+  questionCategories,
+} from "../../utils/categoryList";
 import { useDispatch } from "react-redux";
 import { getQuestionList } from "../../actions/queAnsActions";
 import { getBlogList } from "../../actions/blogActions";
@@ -86,7 +90,7 @@ function BlogFilter() {
               value={category}
               onChange={(e) => setCategory(e.target.value)}
             >
-              {questionCategories.map((option, index) => (
+              {blogCategories.map((option, index) => (
                 <MenuItem key={index} value={option}>
                   {option}
                 </MenuItem>
@@ -101,9 +105,9 @@ function BlogFilter() {
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
             >
-              {questionCategories.map((option, index) => (
-                <MenuItem key={index} value={option}>
-                  {option}
+              {blogSortBy.map((option, index) => (
+                <MenuItem key={index} value={option.value}>
+                  {option.valueText}
                 </MenuItem>
               ))}
             </TextField>
