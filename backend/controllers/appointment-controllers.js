@@ -10,8 +10,8 @@ const path = require("path");
 
 async function generatePrescription(appointment) {
   // Create a new document and add a new page
-  const prescStorage = path.join(__dirname, "../", "public", "prescriptions");
-  const templateStorage = path.join(prescStorage, "template", "form.pdf");
+  const prescStorage = path.join(__dirname, "../", "public", "uploads");
+  const templateStorage = path.join(prescStorage, "prescriptions", "template", "form.pdf");
   let myFile = fs.readFileSync(templateStorage);
 
   const pdfDoc = await PDFDocument.load(myFile);
@@ -32,6 +32,7 @@ async function generatePrescription(appointment) {
   dateField.setText("24/11/2021");
   ageField.setText("24 years");
   patientField.setText("Nihal");
+
   diagnosisField.setText(appointment.diagnosis);
   testsField.setText(appointment.tests);
   adviceField.setText(appointment.advice);
@@ -118,6 +119,7 @@ exports.addPescriptionInfo = async (req, res, next) => {
   let appointment;
   try {
     appointment = await Appointment.findById(id);
+    console.log(appointment);
   } catch (error) {
     console.log(error.message);
     return next(
@@ -127,14 +129,14 @@ exports.addPescriptionInfo = async (req, res, next) => {
       )
     );
   }
-  if (req.userData.id !== appointment.doctorId.toString()) {
-    return next(
-      new HttpError(
-        "Something went wrong, could not add Pescription Information",
-        500
-      )
-    );
-  }
+  // if (req.userData.id !== appointment.doctorId.toString()) {
+  //   return next(
+  //     new HttpError(
+  //       "Something went wrong, could not add Pescription Information",
+  //       500
+  //     )
+  //   );
+  // }
   appointment.diagnosis = diagnosis;
   appointment.tests = tests;
   appointment.advice = advice;
@@ -176,9 +178,7 @@ exports.getPrescription = async (req, res, next) => {
   res
     .status(200)
     .json({
-      diagnosis: appointment.diagnosis,
-      tests: appointment.tests,
-      advice: appointment.advice,
+      filePath: `public/uploads/${appointment.id}_prescription.pdf`
     });
 
   //   res.status(200).json({ diagnosis: appointment.diagnosis, tests: appointment.tests, advice: appointment.advice });

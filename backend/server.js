@@ -24,7 +24,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 //logger middleware
-app.use(morgan("tiny"));
+// app.use(morgan("tiny"));
 
 app.use("/public/uploads", express.static(path.join("public", "uploads")));
 
