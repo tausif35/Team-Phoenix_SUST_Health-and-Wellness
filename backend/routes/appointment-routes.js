@@ -7,6 +7,8 @@ const checkAuth = require('../middleware/check-auth');
 
 router.use(checkAuth);
 
+router.post('/slots', appointmentController.getAppointmentSlots);
+
 router.get('/', appointmentController.getAllAppointments);
 
 router.post('/', appointmentController.createAppointment);
