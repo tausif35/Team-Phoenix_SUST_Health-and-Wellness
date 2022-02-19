@@ -5,10 +5,11 @@ import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
 
 const Container = styled.div`
   width: 100%;
-  height: 100vh;
+  height: 90vh;
   display: flex;
   position: relative;
   overflow: hidden;
+  background-color: #1976D2;
 `;
 
 const Arrow = styled.div`
