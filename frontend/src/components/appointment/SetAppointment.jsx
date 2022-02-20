@@ -246,12 +246,14 @@ function SetAppointment({ selectedDoctor }) {
         </DialogActions>
       </Dialog>
 
-      <Button
-        variant="contained"
-        onClick={(e) => setOpenAppointment(!openAppointment)}
-      >
-        Pick Appointment
-      </Button>
+      {userInfo.role === "user" && (
+        <Button
+          variant="contained"
+          onClick={(e) => setOpenAppointment(!openAppointment)}
+        >
+          Pick Appointment
+        </Button>
+      )}
     </Stack>
   );
 }

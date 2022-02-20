@@ -77,6 +77,10 @@ function Navbar() {
 
         <StyledNavLink to="/blogs">Blogs</StyledNavLink>
 
+        <StyledNavLink to="/drug-info">Drug Info</StyledNavLink>
+
+        <StyledNavLink to="/detect">Detect</StyledNavLink>
+
         {!isLoggedIn && <StyledNavLink to="/sign-up">Sign up</StyledNavLink>}
         {isLoggedIn ? (
           <StyledNavLink to="/profile">{userInfo.name}</StyledNavLink>

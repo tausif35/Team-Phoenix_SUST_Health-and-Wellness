@@ -16,6 +16,7 @@ import SmartDetectPage from "./pages/SmartDetect";
 import VideoChatPage from "./pages/VideoChatPage";
 import ChatPage from "./pages/ChatPage";
 import OtherProfile from "./components/profile/OtherProfile";
+import MedicinePage from "./pages/MedicinePage";
 
 function App() {
   return (
@@ -35,6 +36,8 @@ function App() {
         <Route path="/blogs" element={<BlogsPage />} />
         <Route path="/blogs/:blogId" element={<SingleBlogPage />} />
         <Route path="/blogs/create" element={<BlogCreatePage />} />
+
+        <Route path="/drug-info" element={<MedicinePage />} />
 
         <Route path="/detect" element={<SmartDetectPage />} />
 

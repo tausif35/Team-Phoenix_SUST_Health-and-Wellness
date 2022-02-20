@@ -3,7 +3,7 @@ const Appointment = require("../models/appointment");
 const Doctor = require("../models/doctor");
 const Patient = require("../models/patient");
 const mongoose = require("mongoose");
-const ageCalc = require("../utils/age-calculator");
+const getAge = require("../utils/age-calculator");
 
 const { PDFDocument } = require("pdf-lib");
 const fs = require("fs");
@@ -37,7 +37,12 @@ async function generatePrescription(appointment) {
   // Fill in the basic info fields
   professionalField.setText(appointment.doctorId.name);
   dateField.setText(appointment.date);
-  ageField.setText(ageCalc(appointment.patientId.dateOfBirth));
+  ageField.setText(
+    Math.floor(
+      (new Date() - new Date(appointment.patientId.dateOfBirth).getTime()) /
+        3.15576e10
+    ).toString()
+  );
   patientField.setText(appointment.patientId.name);
 
   diagnosisField.setText(appointment.diagnosis);
