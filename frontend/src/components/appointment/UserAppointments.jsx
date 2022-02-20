@@ -121,7 +121,7 @@ function UserAppointments() {
               multiline
               minRows={2}
               variant="outlined"
-              label="Advices"
+              label="Advices & Medicines"
               onChange={(e) => setAdvice(e.target.value)}
               defaultValue=""
             />

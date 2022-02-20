@@ -3,6 +3,7 @@ const Appointment = require("../models/appointment");
 const Doctor = require("../models/doctor");
 const Patient = require("../models/patient");
 const mongoose = require("mongoose");
+const ageCalc = require("../utils/age-calculator");
 
 const { PDFDocument } = require("pdf-lib");
 const fs = require("fs");
@@ -34,10 +35,10 @@ async function generatePrescription(appointment) {
   const adviceField = form.getTextField("advice");
 
   // Fill in the basic info fields
-  professionalField.setText("Mario");
-  dateField.setText("24/11/2021");
-  ageField.setText("24 years");
-  patientField.setText("Nihal");
+  professionalField.setText(appointment.doctorId.name);
+  dateField.setText(appointment.date);
+  ageField.setText(ageCalc(appointment.patientId.dateOfBirth));
+  patientField.setText(appointment.patientId.name);
 
   diagnosisField.setText(appointment.diagnosis);
   testsField.setText(appointment.tests);
@@ -122,7 +123,10 @@ exports.addPescriptionInfo = async (req, res, next) => {
   const { diagnosis, tests, advice } = req.body;
   let appointment;
   try {
-    appointment = await Appointment.findById(id);
+    appointment = await Appointment.findById(id)
+      .populate("doctorId")
+      .populate("patientId");
+
     console.log(appointment);
   } catch (error) {
     console.log(error.message);
@@ -155,6 +159,8 @@ exports.addPescriptionInfo = async (req, res, next) => {
       )
     );
   }
+
+  generatePrescription(appointment).catch((err) => console.log(err));
   res
     .status(200)
     .json({ appointment: appointment.toObject({ getters: true }) });
@@ -177,16 +183,8 @@ exports.getPrescription = async (req, res, next) => {
     return next(new HttpError("Could not find appointment for this id", 404));
   }
 
-  generatePrescription(appointment).catch((err) => console.log(err));
-
   res.status(200).json({
     filePath: `public/uploads/${appointment.id}_prescription.pdf`,
-  });
-
-  res.status(200).json({
-    diagnosis: appointment.diagnosis,
-    tests: appointment.tests,
-    advice: appointment.advice,
   });
 
   //   res.status(200).json({ diagnosis: appointment.diagnosis, tests: appointment.tests, advice: appointment.advice });

@@ -48,6 +48,10 @@ function AppointmentItem({ item, userInfo, handleMakePrescriptionClick }) {
   const handleChatClick = (id) => {
     navigate("/appointments/chat");
   };
+
+  const handleJoinSession = (id) => {
+    navigate("/videoChat");
+  };
   return (
     <Paper sx={{ width: "100%", maxWidth: "1000px" }}>
       <Stack
@@ -85,7 +89,7 @@ function AppointmentItem({ item, userInfo, handleMakePrescriptionClick }) {
           >
             Chat
           </Button>
-          <Button fullWidth variant="contained">
+          <Button fullWidth variant="contained" onClick={handleJoinSession}>
             Join session
           </Button>
         </Stack>

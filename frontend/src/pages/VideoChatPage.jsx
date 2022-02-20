@@ -5,6 +5,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import Peer from "simple-peer";
 import io from "socket.io-client";
 import styled from "@emotion/styled";
+import { useNavigate } from "react-router-dom";
 
 const UserVideo = styled.video`
   width: 300px;
@@ -25,6 +26,7 @@ function VideoChatPage() {
   const [callAccepted, setCallAccepted] = useState(false);
   const [idToCall, setIdToCall] = useState("");
   const [callEnded, setCallEnded] = useState(false);
+
   const [name, setName] = useState("");
   const myVideo = useRef();
   const userVideo = useRef();
@@ -40,6 +42,11 @@ function VideoChatPage() {
 
     socket.on("me", (id) => {
       setMe(id);
+      console.log(id);
+    });
+
+    socket.on("endCall", (data) => {
+      leaveCall();
     });
 
     socket.on("callUser", (data) => {
@@ -93,9 +100,19 @@ function VideoChatPage() {
     connectionRef.current = peer;
   };
 
+  socket.on("callEnded", () => {
+    connectionRef.current.destroy();
+    navigate(-1);
+  });
+
+  const navigate = useNavigate();
   const leaveCall = () => {
+    socket.emit("endCall", idToCall);
+
     setCallEnded(true);
     connectionRef.current.destroy();
+
+    navigate(-1);
   };
 
   return (
