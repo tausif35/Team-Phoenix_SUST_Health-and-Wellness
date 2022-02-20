@@ -35,7 +35,9 @@ function MedicinePage() {
   };
 
   return (
-    <Stack p={4} spacing={4}>
+    <Stack p={4} spacing={4} alignItems={"center"}>
+      <Typography variant="h4">Search For Medicine Info</Typography>
+
       <Paper
         sx={{
           p: "2px 4px",
@@ -48,7 +50,7 @@ function MedicinePage() {
       >
         <InputBase
           sx={{ ml: 1, flex: 1 }}
-          placeholder="Search For Medicine Info"
+          placeholder="Search"
           onChange={(e) => setSearchText(e.target.value)}
         />
         <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
