@@ -73,7 +73,9 @@ function MedicinePage() {
                 <Typography variant="h5" color={"primary"} fontWeight="bold">
                   {key.replace("_", " ")}
                 </Typography>
-                <Typography>{searchResult[key]}</Typography>
+                <Typography>
+                  {searchResult[key].replace("\\n", "\n")}
+                </Typography>
               </Stack>
             ))}
         </Stack>
