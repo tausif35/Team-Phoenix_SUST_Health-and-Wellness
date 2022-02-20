@@ -176,7 +176,7 @@ export const postAnswer =
         type: GET_SINGLE_QUESTION_SUCCESS,
         payload: {
           ...question,
-          answers: [...question.answers, res.data.data.newAnswer],
+          answers: [...question._answersId, res.data.data.newAnswer],
         },
       });
     } catch (error) {

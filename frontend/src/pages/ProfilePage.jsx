@@ -87,10 +87,12 @@ function ProfilePage() {
           <Key />
           <Typography variant="body1">Password</Typography>
         </StyledNavLink>
-        <StyledNavLink to="/profile/other">
-          <AdminPanelSettings />
-          <Typography variant="body1">Other</Typography>
-        </StyledNavLink>
+        {userInfo.role === "doctor" && (
+          <StyledNavLink to="/profile/other">
+            <AdminPanelSettings />
+            <Typography variant="body1">Other</Typography>
+          </StyledNavLink>
+        )}
       </Stack>
       <Box sx={{ flex: "1", p: 5 }}>
         <Outlet />

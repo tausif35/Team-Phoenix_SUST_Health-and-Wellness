@@ -1,4 +1,4 @@
-import { Stack } from "@mui/material";
+import { Chip, Divider, Stack, Typography } from "@mui/material";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -24,6 +24,8 @@ function SingleBlogPage() {
       <SingleBlog item={blog} userInfo={userInfo} />
 
       {userInfo.role === "user" && <BlogCommentField blogId={params.blogId} />}
+
+      <Typography variant="h5">Comments</Typography>
 
       <BlogCommentList blogId={params.blogId} />
     </Stack>

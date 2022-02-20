@@ -14,17 +14,8 @@ function ChatPage() {
     dispatch(createSocketConnection());
   }, [dispatch]);
 
-  useEffect(() => {}, [socket]);
-
   return (
     <Stack>
-      <Button
-        onClick={() => {
-          socket.emit("hello", { data: "asd" });
-        }}
-      >
-        asdadasd
-      </Button>
       <ChatField />
     </Stack>
   );

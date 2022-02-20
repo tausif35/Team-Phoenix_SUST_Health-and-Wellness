@@ -1,4 +1,4 @@
-import { Stack } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -27,6 +27,8 @@ function SingleQnAPage() {
       {userInfo.role === "doctor" && (
         <AnswerField questionId={params.questionId} />
       )}
+      <Typography variant="h5">Answers</Typography>
+
       <AnswerList answers={question._answersId} />
     </Stack>
   ) : (
