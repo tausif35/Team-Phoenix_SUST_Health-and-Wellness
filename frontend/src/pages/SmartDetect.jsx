@@ -1,8 +1,7 @@
-import React, { Component } from 'react';
-import quizQuestions from '../utils/quizQuestions';
-import Quiz from '../components/smart_detect/Quiz';
-import Result from '../components/smart_detect/Result';
-import logo from '../svg/logo.svg';
+import React, { Component } from "react";
+import quizQuestions from "../utils/quizQuestions";
+import Quiz from "../components/smart_detect/Quiz";
+import Result from "../components/smart_detect/Result";
 
 class SmartDetect extends Component {
   constructor(props) {
@@ -11,23 +10,23 @@ class SmartDetect extends Component {
     this.state = {
       counter: 0,
       questionId: 1,
-      question: '',
+      question: "",
       answerOptions: [],
-      answer: '',
+      answer: "",
       answersCount: {},
-      result: ''
+      result: "",
     };
 
     this.handleAnswerSelected = this.handleAnswerSelected.bind(this);
   }
 
   componentDidMount() {
-    const shuffledAnswerOptions = quizQuestions.map(question =>
+    const shuffledAnswerOptions = quizQuestions.map((question) =>
       this.shuffleArray(question.answers)
     );
     this.setState({
       question: quizQuestions[0].question,
-      answerOptions: shuffledAnswerOptions[0]
+      answerOptions: shuffledAnswerOptions[0],
     });
   }
 
@@ -65,9 +64,9 @@ class SmartDetect extends Component {
     this.setState((state, props) => ({
       answersCount: {
         ...state.answersCount,
-        [answer]: (state.answersCount[answer] || 0) + 1
+        [answer]: (state.answersCount[answer] || 0) + 1,
       },
-      answer: answer
+      answer: answer,
     }));
   }
 
@@ -80,24 +79,26 @@ class SmartDetect extends Component {
       questionId: questionId,
       question: quizQuestions[counter].question,
       answerOptions: quizQuestions[counter].answers,
-      answer: ''
+      answer: "",
     });
   }
 
   getResults() {
     const answersCount = this.state.answersCount;
     const answersCountKeys = Object.keys(answersCount);
-    const answersCountValues = answersCountKeys.map(key => answersCount[key]);
+    const answersCountValues = answersCountKeys.map((key) => answersCount[key]);
     const maxAnswerCount = Math.max.apply(null, answersCountValues);
 
-    return answersCountKeys.filter(key => answersCount[key] === maxAnswerCount);
+    return answersCountKeys.filter(
+      (key) => answersCount[key] === maxAnswerCount
+    );
   }
 
   setResults(result) {
     if (result.length === 1) {
       this.setState({ result: result[0] });
     } else {
-      this.setState({ result: 'Undetermined' });
+      this.setState({ result: "Undetermined" });
     }
   }
 
