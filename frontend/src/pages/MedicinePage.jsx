@@ -71,7 +71,7 @@ function MedicinePage() {
             Object.keys(searchResult).map((key, index) => (
               <Stack key={index} p={4} spacing={2}>
                 <Typography variant="h5" color={"primary"} fontWeight="bold">
-                  {key}
+                  {key.replace("_", " ")}
                 </Typography>
                 <Typography>{searchResult[key]}</Typography>
               </Stack>
