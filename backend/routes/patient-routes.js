@@ -1,13 +1,12 @@
 'use strict';
 const express = require('express');
 const { check } = require('express-validator');
-
-const router = express.Router();
-
 const patientControllers = require('../controllers/patient-controllers');
 const checkAuth = require('../middleware/check-auth');
 const filesUpload = require('../middleware/file-upload');
 const chatController = require('../controllers/chatController');
+
+const router = express.Router();
 
 router.post(
     '/signup', filesUpload.array('image'), [
@@ -30,16 +29,13 @@ router
     .patch(patientControllers.editInfo)
     .put([
         check('oldPassword').custom((value, { req }) => {
-            if (value === req.body.newPassword) {
-                throw new Error('Same password');
-            }
+            if (value === req.body.newPassword) throw new Error('Same password');
             else return value;
         }),
     ], patientControllers.changePassword);
 
 
 router.get('/appointments', patientControllers.getAllAppointments);
-
 
 // id of doctor
 router.get("/chatInfo/:id", chatController.getChatInfo);

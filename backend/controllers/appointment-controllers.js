@@ -72,6 +72,7 @@ exports.createAppointment = catchAsync(async (req, res, next) => {
     const { doctorId, patientId, title, timeStamp, date, time } = req.body;
     const doctor = await Doctor.findById(doctorId);
     const patient = await Patient.findById(patientId);
+    console.log(doctor, patient);
     if (!doctor || !patient) {
         throw new HttpError(
             "Could not find doctor or patient for this appointment",
@@ -93,7 +94,6 @@ exports.createAppointment = catchAsync(async (req, res, next) => {
     patient.appointments.push(createdAppointment);
     await patient.save({ session: session });
     await session.commitTransaction();
-    console.log(error.message);
     res.status(201).json({
         appointment: createdAppointment.toObject({ getters: true }),
     });

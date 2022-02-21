@@ -2,7 +2,7 @@ const fs = require("fs");
 const HttpError = require("../models/http-error");
 
 const handleCastErrorDB = (err) => {
-    const message = `Invalid ${err.path}: ${err.value}.`;
+    const message = `Invalid ${err.path}.`;
     return new HttpError(message, 400);
 };
 
