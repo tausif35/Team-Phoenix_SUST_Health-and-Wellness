@@ -1,292 +1,155 @@
-const { validationResult } = require("express-validator");
+// 'use strict';
+const _ = require("lodash");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
-const HttpError = require("../models/http-error");
-const Patient = require("../models/patient");
 const Doctor = require("../models/doctor");
+const Patient = require("../models/patient");
+const HttpError = require("../models/http-error");
+const catchAsync = require("../utils/catchAsync");
 const Appointment = require("../models/appointment");
+const { validationResult } = require("express-validator");
 
-exports.signup = async (req, res, next) => {
-  const error = validationResult(req);
-  if (!error.isEmpty()) {
-    return next(
-      new HttpError("Invalid inputs passed, please check your data", 422)
-    );
-  }
-  // console.log(req.files[0].path);
-  const { name, dateOfBirth, email, password, gender, phoneNo } = req.body;
-
-  let existingPatient;
-  try {
-    existingPatient = await Patient.findOne({ email: email });
-  } catch (error) {
-    console.log(error.message);
-    return next(new HttpError("Signup failed, please try again later", 500));
-  }
-  if (existingPatient) {
-    return next(new HttpError("User already exists, please login", 422));
-  }
-
-  let hashedPassword;
-  try {
-    hashedPassword = await bcrypt.hash(password, 12);
-  } catch (error) {
-    console.log(error.message);
-    return next(new HttpError("Could not create user, please try again", 500));
-  }
-  // console.log(req.file.path);
-  const createdPatient = new Patient({
-    name,
-    dateOfBirth,
-    email,
-    gender,
-    password: hashedPassword,
-    phoneNo,
-    profileImage: req.files[0].path,
-    appointments: [],
-    questions: [],
-  });
-  try {
-    await createdPatient.save();
-  } catch (error) {
-    console.log(error.message);
-    return next(new HttpError("Signup failed, please try again later", 500));
-  }
-
-  let token;
-  try {
-    token = jwt.sign(
-      {
+exports.signup = catchAsync(async (req, res, next) => {
+    if (!validationResult(req).isEmpty()) {
+        throw new HttpError("Invalid inputs passed, please check your data", 422);
+    }
+    const { name, dateOfBirth, email, password, gender, phoneNo } = req.body;
+    const existingPatient = await Patient.findOne({ email: email });
+    if (existingPatient) {
+        throw new HttpError("User already exists, please login", 422);
+    }
+    const hashedPassword = await bcrypt.hash(password, 12);
+    const createdPatient = await Patient.create({
+        name,
+        dateOfBirth,
+        email,
+        gender,
+        password: hashedPassword,
+        phoneNo,
+        profileImage: req.files[0].path,
+        appointments: [],
+        questions: [],
+    });
+    const token = jwt.sign({
         id: createdPatient.id,
         email: createdPatient.email,
-        type: "patient",
         name: createdPatient.name,
-      },
-      process.env.JWT_KEY,
-      {
+        role: "patient",
+    }, process.env.JWT_KEY, {
         expiresIn: "6d",
-      }
-    );
-  } catch (error) {
-    console.log(error.message);
-    return next(new HttpError("Signup failed, please try again later", 500));
-  }
-  console.log({ token: token });
+    });
+    const tempUser = _.pick(createdPatient, ["id", "name", "email"]);
+    const user = _.assign(tempUser, { token: token });
+    res.status(201).json({ ...user });
+});
 
-  res.status(201).json({
-    id: createdPatient.id,
-    name: createdPatient.name,
-    email: createdPatient.email,
-    token: token,
-  });
-};
-
-exports.login = async (req, res, next) => {
-  const { email, password } = req.body;
-
-  let existingPatient;
-  try {
-    existingPatient = await Patient.findOne({ email: email });
-  } catch (error) {
-    return next(
-      new HttpError("Logging in failed, please try again later.", 500)
-    );
-  }
-  if (!existingPatient) {
-    return next(
-      new HttpError("Invalid credentials, could not log you in.", 401)
-    );
-  }
-
-  let isValidPassword = false;
-  try {
-    isValidPassword = await bcrypt.compare(password, existingPatient.password);
-  } catch (error) {
-    return next(new HttpError("Could not log you in.Please try again", 401));
-  }
-  if (!isValidPassword) {
-    return next(
-      new HttpError("Invalid credentials, could not log you in.", 401)
-    );
-  }
-
-  let token;
-  try {
-    token = jwt.sign(
-      {
+exports.login = catchAsync(async (req, res, next) => {
+    if (!validationResult(req).isEmpty()) {
+        throw new HttpError("Invalid inputs passed, please check your data", 422);
+    }
+    const { email, password } = req.body;
+    const existingPatient = await Patient.findOne({ email: email });
+    if (!existingPatient) {
+        throw new HttpError("Invalid credentials, could not log you in.", 401);
+    }
+    const isValidPassword = await bcrypt.compare(password, existingPatient.password);
+    if (!isValidPassword) {
+        throw new HttpError("Invalid credentials, could not log you in.", 401)
+    }
+    const token = jwt.sign({
         id: existingPatient.id,
         email: existingPatient.email,
         type: "patient",
         name: existingPatient.name,
-      },
-      process.env.JWT_KEY,
-      {
+    }, process.env.JWT_KEY, {
         expiresIn: "6d",
-      }
-    );
-  } catch (error) {
-    console.log(error.message);
-    return next(
-      new HttpError("Logging in failed, please try again later.", 500)
-    );
-  }
+    });
+    const tempUser = _.pick(existingPatient, ["id", "name", "email"]);
+    const user = _.assign(tempUser, { token: token });
+    res.status(201).json({ ...user });
+});
 
-  res.status(201).json({
-    id: existingPatient.id,
-    email: existingPatient.email,
-    name: existingPatient.name,
-    token: token,
-  });
-};
-
-exports.getProfile = async (req, res, next) => {
-  const patientId = req.params.id;
-  let patient;
-  try {
-    patient = await Patient.findById(patientId);
-  } catch (error) {
-    console.log(error.message);
-    return next(
-      new HttpError("Something went wrong, could not find patient.", 500)
-    );
-  }
-  if (!patient) {
-    return next(
-      new HttpError("Something went wrong, could not find patient.", 500)
-    );
-  }
-  res.status(200).json({ patient: patient.toObject({ getters: true }) });
-};
-
-exports.editInfo = async (req, res, next) => {
-  const patientId = req.params.patientId;
-
-  const { phoneNo, password } = req.body;
-  let updatedPatient;
-  try {
-    updatedPatient = await Patient.findById(patientId);
-  } catch (error) {
-    console.log(error.message);
-    return next(
-      new HttpError("Something went wrong, could not update information.", 500)
-    );
-  }
-  if (!updatedPatient) {
-    return next(
-      new HttpError("Something went wrong, could not update information.", 500)
-    );
-  }
-  let isValidPassword = false;
-  try {
-    isValidPassword = await bcrypt.compare(password, updatedPatient.password);
-  } catch (error) {
-    console.log(error.message);
-    return next(
-      new HttpError("Something went wrong, could not update information.", 500)
-    );
-  }
-  if (!isValidPassword) {
-    return next(new HttpError("Invalid password, could not update info.", 401));
-  }
-  updatedPatient.phoneNo = phoneNo;
-  try {
+exports.editInfo = catchAsync(async (req, res, next) => {
+    const patientId = req.params.patientId;
+    const { phoneNo, password } = req.body;
+    const updatedPatient = await Patient.findById(patientId);
+    if (!updatedPatient) {
+        throw new HttpError("Could not find patient", 404);
+    }
+    const isValidPassword = await bcrypt.compare(password, updatedPatient.password);
+    if (!isValidPassword) {
+        throw new HttpError("Invalid password, could not update info.", 401);
+    }
+    updatedPatient.phoneNo = phoneNo;
     await updatedPatient.save();
-  } catch (error) {
-    // console.log(error);
-    return next(
-      new HttpError("Something went wrong, could not update information", 500)
-    );
-  }
-  res.status(200).json({ patient: updatedPatient });
-};
+    const user = _.omit(updatedPatient.toObject(), "password");
+    res.status(200).json({ patient: user });
+});
 
-exports.changePassword = async (req, res, next) => {
-  const error = validationResult(req);
-  if (!error.isEmpty()) {
-    return next(new HttpError("Invalid inputs", 422));
-  }
-
-  const patientId = req.params.patientId;
-  const { oldPassword, newPassword } = req.body;
-
-  let updatedPatient;
-  try {
-    updatedPatient = await Patient.findById(patientId);
-  } catch (error) {
-    return next(
-      new HttpError("Something went wrong, could not update password.", 500)
-    );
-  }
-  if (!updatedPatient) {
-    return next(
-      new HttpError("Something went wrong, could not update information.", 500)
-    );
-  }
-
-  let isValidPassword = false;
-  try {
-    isValidPassword = await bcrypt.compare(
-      oldPassword,
-      updatedPatient.password
-    );
-  } catch (error) {
-    return next(
-      new HttpError("Something went wrong, could not update password.", 500)
-    );
-  }
-  if (!isValidPassword) {
-    return next(
-      new HttpError("Invalid password, could not update password.", 401)
-    );
-  }
-  if (newPassword === oldPassword) {
-    return next(
-      new HttpError(
-        "Old password and new password are same, could not update password.",
-        401
-      )
-    );
-  }
-
-  let hashedPassword;
-  try {
-    hashedPassword = await bcrypt.hash(newPassword, 12);
-  } catch (error) {
-    console.log(error.message);
-    return next(
-      new HttpError("Something went wrong, could not update password.", 500)
-    );
-  }
-
-  updatedPatient.password = hashedPassword;
-  try {
+exports.changePassword = catchAsync(async (req, res, next) => {
+    const error = validationResult(req);
+    if (!error.isEmpty()) {
+        throw new HttpError("Invalid inputs", 422);
+    }
+    const patientId = req.params.patientId;
+    if(req.userData.id !== patientId) {
+        throw new HttpError("You are not authorized to change password", 401);
+    }
+    const { oldPassword, newPassword } = req.body;
+    const updatedPatient = await Patient.findById(patientId);
+    if (!updatedPatient) {
+        throw new HttpError("Something went wrong, could not update information.", 500)
+    }
+    isValidPassword = await bcrypt.compare(oldPassword, updatedPatient.password);
+    if (!isValidPassword) {
+        throw new HttpError("Invalid password, could not update password.", 401)
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    updatedPatient.password = hashedPassword;
     await updatedPatient.save();
-  } catch (error) {
-    console.log(error);
-    return next(
-      new HttpError("Something went wrong, could not update password.", 500)
-    );
-  }
-  res.status(200).json({ patient: updatedPatient.toObject({ getters: true }) });
-};
+    const user = _.omit(updatedPatient.toObject(), "password");
+    res.status(200).json({ patient: user });
+});
+
+exports.getProfile = catchAsync(async (req, res, next) => {
+    const patientId = req.params.id;
+    let patient;
+    try {
+        patient = await Patient.findById(patientId);
+    } catch (error) {
+        console.log(error.message);
+        return next(
+            new HttpError("Something went wrong, could not find patient.", 500)
+        );
+    }
+    if (!patient) {
+        return next(
+            new HttpError("Something went wrong, could not find patient.", 500)
+        );
+    }
+    res.status(200).json({ patient: patient.toObject({ getters: true }) });
+});
+
+
+
+
 
 exports.getAllAppointments = async (req, res, next) => {
-  let appointments;
-  try {
-    appointments = await Appointment.find({
-      patientId: req.userData.id,
-    }).populate("doctorId");
-  } catch (error) {
-    next(
-      new HttpError("Something went wrong, could not get appointments.", 500)
-    );
-  }
-  res.status(200).json({
-    data: {
-      appointments: appointments.map((appointment) =>
-        appointment.toObject({ getters: true })
-      ),
-    },
-  });
+    let appointments;
+    try {
+        appointments = await Appointment.find({
+            patientId: req.userData.id,
+        }).populate("doctorId");
+    } catch (error) {
+        next(
+            new HttpError("Something went wrong, could not get appointments.", 500)
+        );
+    }
+    res.status(200).json({
+        data: {
+            appointments: appointments.map((appointment) =>
+                appointment.toObject({ getters: true })
+            ),
+        },
+    });
 };
