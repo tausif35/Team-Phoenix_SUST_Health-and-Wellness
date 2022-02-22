@@ -1,15 +1,13 @@
-import { Stack, Paper, Typography } from "@mui/material";
+import { Stack, Button } from "@mui/material";
 import ChatField from "../components/chat/ChatField";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import moment from "moment";
+import ChatBox from "../components/chat/ChatBox";
 
 function ChatPage() {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [receivedMsg, setReceivedMsg] = useState([]);
+  const [messageList, setMessageList] = useState([]);
 
   const chatRoomId = searchParams.get("roomId");
 
@@ -28,75 +26,49 @@ function ChatPage() {
       });
 
       socket.on("user-sent-Msg", (data) => {
-        setReceivedMsg([
-          ...receivedMsg,
+        console.log(data);
+        setMessageList((previousMessages) => [
+          ...previousMessages,
           {
             isReceived: true,
             sender: data.sender,
             text: data.text,
-            timeStamp: Date.now(),
+            timeStamp: data.timeStamp,
           },
         ]);
-
-        console.log(receivedMsg);
       });
     }
   }, [chatRoomId, socket]);
 
   const handleChatSend = (chatText) => {
+    const sendingTime = Date.now();
+
     socket.emit("chatMsg", {
       roomId: chatRoomId,
       text: chatText,
       sender: userInfo.name,
+      timeStamp: sendingTime,
     });
 
-    setReceivedMsg([
-      ...receivedMsg,
+    setMessageList((previousMessages) => [
+      ...previousMessages,
       {
         isReceived: false,
-        sender: userInfo.name,
+        sender: "Me",
         text: chatText,
-        timeStamp: Date.now(),
+        timeStamp: sendingTime,
       },
     ]);
   };
 
   return (
-    <Stack p={4}>
-      <Stack spacing={2}>
-        {receivedMsg.map((msg, index) => (
-          <Paper
-            key={index}
-            sx={{ background: msg.isReceived ? "#1976D2" : "#fff" }}
-          >
-            <Stack spacing={1} p={2}>
-              <Typography
-                variant="body1"
-                fontWeight={"bold"}
-                color={msg.isReceived ? "#fff" : "primary"}
-              >
-                {msg.sender}
-              </Typography>
+    <Stack spacing={2} py={2}>
+      <Button variant={"contained"} sx={{ mx: 2 }}>
+        Set Another Appointment
+      </Button>
 
-              <Typography
-                variant="body2"
-                color={msg.isReceived ? "#fff" : "primary"}
-              >
-                {moment(Number(msg.timeStamp)).format(
-                  "ddd, MMM DD, YYYY, h:mm a"
-                )}
-              </Typography>
+      <ChatBox messageList={messageList} />
 
-              <Typography
-                variant="body1"
-                color={msg.isReceived ? "#fff" : "primary"}
-              >
-                {msg.text}
-              </Typography>
-            </Stack>
-          </Paper>
-        ))}
-      </Stack>
       <ChatField handleChatSend={handleChatSend} />
     </Stack>
   );

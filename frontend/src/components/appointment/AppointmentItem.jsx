@@ -22,7 +22,7 @@ function AppointmentItem({ item, userInfo, handleMakePrescriptionClick }) {
   };
   const handleCancelAppointmentClick = async (id) => {
     try {
-      const res = await axios.delete(`${DELETE_APPOINTMENTS}/${id}`, config);
+      await axios.delete(`${DELETE_APPOINTMENTS}/${id}`, config);
 
       dispatch(getPatientAppointments());
     } catch (error) {
@@ -50,7 +50,7 @@ function AppointmentItem({ item, userInfo, handleMakePrescriptionClick }) {
   };
 
   const handleJoinSession = (id) => {
-    navigate(`/appointments/videoChat/?roomId=${id}`);
+    navigate(`/appointments/videoCall/?roomId=${id}`);
   };
 
   return (

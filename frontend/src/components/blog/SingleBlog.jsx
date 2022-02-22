@@ -1,14 +1,6 @@
 import styled from "@emotion/styled";
 import { ThumbUp } from "@mui/icons-material";
-import {
-  Button,
-  Chip,
-  Divider,
-  IconButton,
-  Paper,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Button, Chip, Divider, Paper, Stack, Typography } from "@mui/material";
 import axios from "axios";
 import moment from "moment";
 import React, { useState } from "react";

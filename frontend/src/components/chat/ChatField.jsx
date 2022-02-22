@@ -1,44 +1,45 @@
-import { Send } from "@mui/icons-material";
-import { IconButton, InputBase, Paper } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { AttachFile, Send } from "@mui/icons-material";
+import { IconButton, InputBase, Paper, Stack } from "@mui/material";
+import { useState } from "react";
 
 function ChatField({ handleChatSend }) {
   const [chatText, setChatText] = useState("");
 
   const handleMsgSend = () => {
-    handleChatSend(chatText);
+    handleChatSend(chatText.trim());
     setChatText("");
   };
   return (
     <Paper
       sx={{
-        p: 1,
-        display: "flex",
-        alignItems: "center",
-        width: "95%",
-        borderRadius: "100px",
-        position: "absolute",
-        bottom: 50,
-        left: 0,
-        right: 0,
-        mx: "auto",
+        alignSelf: "center",
+        position: "fixed",
+        bottom: "2rem",
+        left: "2rem",
+        right: "2rem",
       }}
     >
-      <InputBase
-        placeholder="Write answer here"
-        sx={{ pl: 2, flex: 1 }}
-        value={chatText}
-        onChange={(e) => setChatText(e.target.value)}
-      />
-      <IconButton
-        disabled={chatText ? false : true}
-        sx={{ p: "10px" }}
-        color="primary"
-        onClick={handleMsgSend}
-      >
-        <Send />
-      </IconButton>
+      <Stack spacing={1} p={1} direction={"row"}>
+        <IconButton sx={{ p: 1, alignSelf: "flex-end" }} color="primary">
+          <AttachFile />
+        </IconButton>
+        <InputBase
+          multiline
+          maxRows={4}
+          placeholder="Write here"
+          sx={{ p: 1, flex: 1, overflowY: "auto", bgcolor: "#fff" }}
+          value={chatText}
+          onChange={(e) => setChatText(e.target.value)}
+        />
+        <IconButton
+          disabled={chatText.trim() ? false : true}
+          sx={{ p: 1, alignSelf: "flex-end" }}
+          color="primary"
+          onClick={handleMsgSend}
+        >
+          <Send />
+        </IconButton>
+      </Stack>
     </Paper>
   );
 }

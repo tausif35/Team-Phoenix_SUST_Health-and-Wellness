@@ -1,4 +1,4 @@
-import { Chip, Divider, Stack, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
