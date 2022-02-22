@@ -1,29 +1,41 @@
+'use strict';
 const express = require('express');
-
-const router = express.Router();
-
+const { check } = require('express-validator');
 const patientControllers = require('../controllers/patient-controllers');
 const checkAuth = require('../middleware/check-auth');
 const filesUpload = require('../middleware/file-upload');
 const chatController = require('../controllers/chatController');
 
-router.post(
-    '/signup',
-    filesUpload.array('image'),
-    patientControllers.signup);
+const router = express.Router();
 
-router.post('/login', patientControllers.login);
+router.post(
+    '/signup', filesUpload.array('image'), [
+    check('name').notEmpty(),
+    check('email').isEmail(),
+    check('password').isLength({ min: 6 }),
+], patientControllers.signup);
+
+router.post('/login', [
+    check('email').isEmail(),
+    check('password').isLength({ min: 6 }),
+], patientControllers.login);
 
 router.get('/profile/:id', patientControllers.getProfile);
 
 router.use(checkAuth);
 
-router.patch('/:patientId', patientControllers.editInfo);
+router
+    .route('/:patientId')
+    .patch(patientControllers.editInfo)
+    .put([
+        check('oldPassword').custom((value, { req }) => {
+            if (value === req.body.newPassword) throw new Error('Same password');
+            else return value;
+        }),
+    ], patientControllers.changePassword);
 
-router.put('/:patientId', patientControllers.changePassword);
 
 router.get('/appointments', patientControllers.getAllAppointments);
-
 
 // id of doctor
 router.get("/chatInfo/:id", chatController.getChatInfo);

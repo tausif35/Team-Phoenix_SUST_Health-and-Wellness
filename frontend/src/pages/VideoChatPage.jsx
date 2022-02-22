@@ -15,9 +15,9 @@ const CallerVideo = styled.video`
   width: 600px;
 `;
 
-const socket = io.connect("http://localhost:5005");
-
 function VideoChatPage() {
+  const socket = io.connect("http://localhost:5005");
+
   const [me, setMe] = useState("");
   const [stream, setStream] = useState();
   const [receivingCall, setReceivingCall] = useState(false);
@@ -26,8 +26,8 @@ function VideoChatPage() {
   const [callAccepted, setCallAccepted] = useState(false);
   const [idToCall, setIdToCall] = useState("");
   const [callEnded, setCallEnded] = useState(false);
-
   const [name, setName] = useState("");
+
   const myVideo = useRef();
   const userVideo = useRef();
   const connectionRef = useRef();

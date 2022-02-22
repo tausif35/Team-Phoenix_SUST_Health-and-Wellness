@@ -1,10 +1,15 @@
 import { Send } from "@mui/icons-material";
 import { IconButton, InputBase, Paper } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-function ChatField() {
+function ChatField({ handleChatSend }) {
   const [chatText, setChatText] = useState("");
 
+  const handleMsgSend = () => {
+    handleChatSend(chatText);
+    setChatText("");
+  };
   return (
     <Paper
       sx={{
@@ -26,7 +31,12 @@ function ChatField() {
         value={chatText}
         onChange={(e) => setChatText(e.target.value)}
       />
-      <IconButton sx={{ p: "10px" }} color="primary">
+      <IconButton
+        disabled={chatText ? false : true}
+        sx={{ p: "10px" }}
+        color="primary"
+        onClick={handleMsgSend}
+      >
         <Send />
       </IconButton>
     </Paper>
