@@ -17,8 +17,18 @@ import VideoChatPage from "./pages/VideoChatPage";
 import ChatPage from "./pages/ChatPage";
 import OtherProfile from "./components/profile/OtherProfile";
 import MedicinePage from "./pages/MedicinePage";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { createSocketConnection } from "./actions/socketActions";
+import VideoCallPage from "./pages/VideoCallPage";
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(createSocketConnection());
+  }, [dispatch]);
+
   return (
     <>
       <Navbar />
@@ -26,9 +36,9 @@ function App() {
         <Route path="/" element={<Navigate replace to="/home" />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/appointments" element={<AppointmentPage />} />
-        <Route path="/appointments/chat" element={<ChatPage />} />
+        <Route path="/appointments/chat/" element={<ChatPage />} />
 
-        <Route path="/videoChat" element={<VideoChatPage />} />
+        <Route path="/appointments/videoChat/" element={<VideoCallPage />} />
 
         <Route path="/q-a" element={<QueAnsPage />} />
         <Route path="/q-a/:questionId" element={<SingleQnAPage />} />

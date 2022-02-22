@@ -1,21 +1,17 @@
-const { validationResult } = require("express-validator");
+"use strict";
+const _ = require("lodash");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
-const HttpError = require("../models/http-error");
+const mongoose = require("mongoose");
 const Doctor = require("../models/doctor");
+const HttpError = require("../models/http-error");
+const catchAsync = require("../utils/catchAsync");
 const Appointment = require("../models/appointment");
+const { validationResult } = require("express-validator");
 
-exports.signup = async (req, res, next) => {
-  const error = validationResult(req);
-  if (!error.isEmpty()) {
-    return next(
-      new HttpError("Invalid inputs passed, please check your data", 422)
-    );
-  }
-  // console.log(req.files[0].path);
-  // console.log(req.files[1].path);
-  // console.log(req.files[2].path);
+exports.signup = catchAsync(async (req, res, next) => {
+  if (!validationResult(req).isEmpty())
+    throw new HttpError("Invalid inputs passed, please check your data", 422);
   const {
     name,
     gender,
@@ -27,134 +23,78 @@ exports.signup = async (req, res, next) => {
     qualifications,
     workplaces,
   } = req.body;
-
-  let existingDoctor;
-  try {
-    existingDoctor = await Doctor.findOne({ email: email });
-  } catch (error) {
-    console.log(error.message);
-    return next(new HttpError("Signup failed, please try again later", 500));
-  }
-  if (existingDoctor) {
-    return next(new HttpError("User already exists, please login", 422));
-  }
-
-  let hashedPassword;
-  try {
-    hashedPassword = await bcrypt.hash(password, 12);
-  } catch (error) {
-    console.log(error.message);
-    return next(new HttpError("Could not create user, please try again", 500));
-  }
-
-  const createdDoctor = new Doctor({
-    name,
-    gender,
-    phoneNo,
-    email,
-    password: hashedPassword,
-    profileImage: req.files[0].path,
-    medicalId,
-    licenseFront: req.files[1].path,
-    licenseBack: req.files[2].path,
-    specializations: JSON.parse(specializations),
-    qualifications: JSON.parse(qualifications),
-    workplaces: JSON.parse(workplaces),
-    appointments: [],
-    blogs: [],
-  });
-  try {
-    await createdDoctor.save();
-  } catch (error) {
-    console.log(error.message);
-    return next(new HttpError("Signup failed, please try again later", 500));
-  }
-
-  let token;
-  try {
-    token = jwt.sign(
+  const existingDoctor = await Doctor.findOne({ email: email });
+  if (existingDoctor)
+    throw new HttpError("User already exists, please login", 422);
+  const hashedPassword = await bcrypt.hash(password, 12);
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  const createdDoctor = await Doctor.create(
+    [
       {
-        id: createdDoctor.id,
-        email: createdDoctor.email,
-        type: "doctor",
-        name: createdDoctor.name,
+        name,
+        gender,
+        phoneNo,
+        email,
+        password: hashedPassword,
+        profileImage: req.files[0].path,
+        medicalId,
+        licenseFront: req.files[1].path,
+        licenseBack: req.files[2].path,
+        specializations: JSON.parse(specializations),
+        qualifications: JSON.parse(qualifications),
+        workplaces: JSON.parse(workplaces),
+        appointments: [],
+        blogs: [],
       },
-      process.env.JWT_KEY,
-      {
-        expiresIn: "6d",
-      }
-    );
-  } catch (error) {
-    console.log(error.message);
-    return next(new HttpError("Signup failed, please try again later", 500));
-  }
-  console.log({ token: token });
-  res.status(201).json({
-    id: createdDoctor.id,
-    name: createdDoctor.name,
-    email: createdDoctor.email,
-    token: token,
-  });
-};
+    ],
+    { session: session }
+  );
+  const token = jwt.sign(
+    {
+      id: createdDoctor.id,
+      email: createdDoctor.email,
+      type: "doctor",
+      name: createdDoctor.name,
+    },
+    process.env.JWT_KEY,
+    {
+      expiresIn: "6d",
+    }
+  );
+  await session.commitTransaction();
+  const user = _.pick(createdDoctor, ["id", "name", "email"]);
+  res.status(201).json({ ...user, token });
+});
 
-exports.login = async (req, res, next) => {
+exports.login = catchAsync(async (req, res, next) => {
+  if (!validationResult(req).isEmpty())
+    throw new HttpError("Invalid inputs passed, please check your data", 422);
   const { email, password } = req.body;
-
-  let existingDoctor;
-  try {
-    existingDoctor = await Doctor.findOne({ email: email });
-  } catch (error) {
-    return next(
-      new HttpError("Logging in failed, please try again later.", 500)
-    );
-  }
-  if (!existingDoctor) {
-    return next(
-      new HttpError("Invalid credentials, could not log you in.", 401)
-    );
-  }
-
-  let isValidPassword = false;
-  try {
-    isValidPassword = await bcrypt.compare(password, existingDoctor.password);
-  } catch (error) {
-    return next(new HttpError("Could not log you in.Please try again", 401));
-  }
-  if (!isValidPassword) {
-    return next(
-      new HttpError("Invalid credentials, could not log you in.", 401)
-    );
-  }
-
-  let token;
-  try {
-    token = jwt.sign(
-      {
-        id: existingDoctor.id,
-        email: existingDoctor.email,
-        type: "doctor",
-        name: existingDoctor.name,
-      },
-      process.env.JWT_KEY,
-      {
-        expiresIn: "6d",
-      }
-    );
-  } catch (error) {
-    console.log(error.message);
-    return next(
-      new HttpError("Logging in failed, please try again later.", 500)
-    );
-  }
-  console.log({ token: token });
-
-  res.status(201).json({
-    id: existingDoctor.id,
-    email: existingDoctor.email,
-    name: existingDoctor.name,
-    token: token,
-  });
-};
+  const existingDoctor = await Doctor.findOne({ email: email });
+  if (!existingDoctor)
+    throw new HttpError("Invalid credentials, could not log you in.", 401);
+  const isValidPassword = await bcrypt.compare(
+    password,
+    existingDoctor.password
+  );
+  if (!isValidPassword)
+    throw new HttpError("Invalid credentials, could not log you in.", 401);
+  const token = jwt.sign(
+    {
+      id: existingDoctor.id,
+      email: existingDoctor.email,
+      type: "doctor",
+      name: existingDoctor.name,
+    },
+    process.env.JWT_KEY,
+    {
+      expiresIn: "6d",
+    }
+  );
+  const user = _.pick(existingDoctor, ["id", "name", "email"]);
+  res.status(201).json({ ...user, token });
+});
 
 exports.getProfile = async (req, res, next) => {
   const doctorId = req.params.id;
@@ -340,25 +280,20 @@ exports.getDoctor = async (req, res, next) => {
   res.status(200).json({ doctor: doctor.toObject({ getters: true }) });
 };
 
-exports.getAllAppointments = async (req, res, next) => {
-  const doctorId = req.params.id ? req.params.id : req.userData.id;
-  let doctor;
-  let appointments;
-  try {
-    appointments = await Appointment.find({ doctorId: doctorId }).populate(
-      "doctorId"
-    );
-  } catch (error) {
-    next(
-      new HttpError("Something went wrong, could not get appointments.", 500)
-    );
-  }
+exports.getAllAppointments = catchAsync(async (req, res, next) => {
+  console.log(req.userData.id);
+
+  const appointments = await Appointment.find({
+    doctorId: req.userData.id,
+  }).populate("patientId");
+
+  console.log(appointments);
 
   res.status(200).json({
     data: {
       appointments: appointments.map((appointment) =>
-        appointment.toObject({ getters: true })
+        _.omit(appointment.toObject({ getters: true }), ["patientId.password"])
       ),
     },
   });
-};
+});
