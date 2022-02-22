@@ -13,23 +13,32 @@ const doctorRoutes = require("./routes/doctor-routes");
 const patientRoutes = require("./routes/patient-routes");
 const generalRoutes = require("./routes/general-routes");
 const appointmentRoutes = require("./routes/appointment-routes");
-const errorHandlar = require("./controllers/errorController");
+const errorHandler = require("./controllers/errorController");
+const http = require("http");
+const { Server } = require("socket.io");
+const connectDB = require("./dbConfig/databaseConnect");
+const socketInit = require("./controllers/socketController");
 
 const app = express();
 const port = process.env.PORT || 5000;
 
+const server = http.createServer(app);
+
+connectDB();
+
 // Cross-Origin Resource Sharing middleware
 app.use(
-    cors({
-      origin: ["http://localhost:3000"],
-      methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
-      credentials: true,
-    })
-  );
+  cors({
+    origin: ["http://localhost:3000"],
+    methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
+    credentials: true,
+  })
+);
+
 app.use(bodyParser.json());
 
 //logger middleware
-app.use(morgan("tiny"));
+//app.use(morgan("tiny"));
 
 app.use("/public/uploads", express.static(path.join("public", "uploads")));
 
@@ -45,14 +54,11 @@ app.use((req, res, next) => {
   next(error);
 });
 
-app.use(errorHandlar);
+app.use(errorHandler);
 
 // server start
-mongoose
-  .connect(process.env.DB_CONNECTION)
-  .then(() => {
-    app.listen(port, () => {
-      console.log(`Listening to the server on http://localhost:${port}`);
-    });
-  })
-  .catch((err) => console.log(err.message));
+const serverRef = server.listen(port, () => {
+  console.log(`Listening to the server on http://localhost:${port}`);
+});
+
+socketInit(serverRef);
