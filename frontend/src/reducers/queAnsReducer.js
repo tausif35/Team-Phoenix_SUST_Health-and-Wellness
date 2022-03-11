@@ -13,7 +13,7 @@ import {
   POST_ANSWER_SUCCESS,
   POST_QUESTION_FAIL,
   POST_QUESTION_REQUEST,
-  POST_QUESTION_SUCCESS,
+  POST_QUESTION_SUCCESS
 } from "../constants/queAnsConstants";
 
 export const askQuestionReducer = (state = {}, action) => {

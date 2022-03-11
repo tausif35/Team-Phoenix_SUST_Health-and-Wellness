@@ -14,12 +14,11 @@ import {
   MenuItem,
   Stack,
   TextField,
-  Typography,
+  Typography
 } from "@mui/material";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { register } from "../../actions/userActions";
 import { genders } from "../../utils/categoryList";

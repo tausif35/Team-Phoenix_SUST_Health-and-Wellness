@@ -1,7 +1,7 @@
-import { useState } from "react";
 import styled from "@emotion/styled";
-import SliderItem from "./SliderItem";
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
+import { useState } from "react";
+import SliderItem from "./SliderItem";
 
 const Container = styled.div`
   width: 100%;

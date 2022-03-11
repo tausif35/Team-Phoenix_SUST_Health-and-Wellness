@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { AdminPanelSettings, Key, Person } from "@mui/icons-material";
+import { Info, Key, Person } from "@mui/icons-material";
 import { Avatar, Divider, Stack, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
@@ -11,10 +11,10 @@ import { API_HOST } from "../constants/apiLinks";
 const StyledNavLink = styled(NavLink)`
   color: black;
   text-transform: capitalize;
-  padding: 1rem;
+  padding: 1rem 4rem;
   display: flex;
-  align-item: center;
-  justify-content: center;
+  align-items: center;
+  justify-content: start;
   gap: 1rem;
   transition: 0.5s;
 
@@ -25,6 +25,10 @@ const StyledNavLink = styled(NavLink)`
   &.active {
     background-color: #1976d2;
     color: #ffffff;
+  }
+
+  @media (max-width: 800px) {
+    justify-content: center;
   }
 `;
 
@@ -37,7 +41,7 @@ function ProfilePage() {
 
   const { userInfo } = useSelector((state) => state.userLogin);
 
-  const { loading, user } = useSelector((state) => state.userDetails);
+  const { user } = useSelector((state) => state.userDetails);
 
   useEffect(() => {
     if (userInfo && Object.keys(userInfo).length) {
@@ -67,7 +71,7 @@ function ProfilePage() {
       justifyContent={"center"}
       bgcolor={"#fff"}
     >
-      <Stack divider={<Divider />} minWidth={"250px"}>
+      <Stack divider={<Divider />} minWidth={"280px"}>
         <Stack spacing={4} py={4}>
           <Avatar
             alt="Profile Picture"
@@ -89,7 +93,7 @@ function ProfilePage() {
         </StyledNavLink>
         {userInfo.role === "doctor" && (
           <StyledNavLink to="/profile/other">
-            <AdminPanelSettings />
+            <Info />
             <Typography variant="body1">Other</Typography>
           </StyledNavLink>
         )}

@@ -1,4 +1,4 @@
-import { Divider, Paper, Stack, Typography } from "@mui/material";
+import { Divider, Paper, Stack } from "@mui/material";
 import { useSelector } from "react-redux";
 import AnswerItem from "./AnswerItem";
 

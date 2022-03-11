@@ -71,7 +71,6 @@ export const getPatientAppointments = () => async (dispatch, getState) => {
 
     const res = await axios.get(`${reqLink}`, config);
 
-    console.log(res.data.data.appointments);
 
     if (userInfo.role === "user") {
       dispatch({

@@ -37,8 +37,6 @@ function AppointmentItem({ item, userInfo, handleMakePrescriptionClick }) {
         config
       );
 
-      console.log(res.data.filePath);
-
       window.open(`${API_HOST}/${res.data.filePath}`, "_blank");
     } catch (error) {
       console.log(error);
@@ -64,14 +62,11 @@ function AppointmentItem({ item, userInfo, handleMakePrescriptionClick }) {
       >
         <Avatar
           alt="Profile Picture"
-          src={
-            item.doctorId.profileImage &&
-            `${API_HOST}/${
-              userInfo.role === "user"
-                ? item.doctorId.profileImage
-                : item.patientId.profileImage
-            }`
-          }
+          src={`${API_HOST}/${
+            userInfo.role === "user"
+              ? item.doctorId.profileImage
+              : item.patientId.profileImage
+          }`}
           sx={{ width: 80, height: 80 }}
         />
 

@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
-import { Stack, Paper, Box, Typography } from "@mui/material";
-import moment from "moment";
 import { useEffect, useRef } from "react";
+import ChatItem from "./ChatItem";
 
 const Container = styled.div`
   display: flex;
@@ -39,7 +38,7 @@ const Container = styled.div`
   }
 `;
 
-function ChatBox({ messageList }) {
+function ChatBox({ messageList, user, chatWith }) {
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -53,41 +52,18 @@ function ChatBox({ messageList }) {
   return (
     <Container>
       {messageList.map((msg, index) => (
-        <Paper
-          key={index}
-          variant={"outlined"}
-          sx={{
-            background: msg.isReceived ? "#1976D2" : "#fff",
-            p: 2,
-            alignSelf: msg.isReceived ? "start" : "end",
+        <ChatItem
+          message={{
+            ...msg,
+            isReceived: msg.senderId !== user.id,
+            sender: msg.senderId !== user.id ? chatWith.name : "Me",
+            senderPic:
+              msg.senderId !== user.id
+                ? chatWith.profileImage
+                : user.profileImage,
           }}
-        >
-          <Stack spacing={1} alignItems={msg.isReceived ? "start" : "end"}>
-            <Typography
-              variant="body1"
-              fontWeight={"bold"}
-              color={msg.isReceived ? "#fff" : "primary"}
-            >
-              {msg.sender}
-            </Typography>
-
-            <Typography
-              variant="caption"
-              color={msg.isReceived ? "#fff" : "primary"}
-            >
-              {moment(Number(msg.timeStamp)).format(
-                "ddd, MMM DD, YYYY, h:mm a"
-              )}
-            </Typography>
-
-            <Typography
-              variant="body1"
-              color={msg.isReceived ? "#fff" : "primary"}
-            >
-              <pre style={{ fontFamily: "inherit", margin: 0 }}>{msg.text}</pre>
-            </Typography>
-          </Stack>
-        </Paper>
+          key={index}
+        />
       ))}
 
       <div ref={messagesEndRef} />

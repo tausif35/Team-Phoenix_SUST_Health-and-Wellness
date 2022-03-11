@@ -5,6 +5,7 @@ const router = express.Router();
 const qnaControllers = require('../controllers/qnaControllers');
 const checkAuth = require('../middleware/check-auth');
 
+
 router.use(checkAuth);
 
 router.get('/', qnaControllers.getAllQuestion);

@@ -23,33 +23,30 @@ exports.signup = catchAsync(async (req, res, next) => {
     qualifications,
     workplaces,
   } = req.body;
+
   const existingDoctor = await Doctor.findOne({ email: email });
+
   if (existingDoctor)
     throw new HttpError("User already exists, please login", 422);
+
   const hashedPassword = await bcrypt.hash(password, 12);
-  const session = await mongoose.startSession();
-  session.startTransaction();
-  const createdDoctor = await Doctor.create(
-    [
-      {
-        name,
-        gender,
-        phoneNo,
-        email,
-        password: hashedPassword,
-        profileImage: req.files[0].path,
-        medicalId,
-        licenseFront: req.files[1].path,
-        licenseBack: req.files[2].path,
-        specializations: JSON.parse(specializations),
-        qualifications: JSON.parse(qualifications),
-        workplaces: JSON.parse(workplaces),
-        appointments: [],
-        blogs: [],
-      },
-    ],
-    { session: session }
-  );
+
+  const createdDoctor = await Doctor.create({
+    name,
+    gender,
+    phoneNo,
+    email,
+    password: hashedPassword,
+    profileImage: req.files[0].path,
+    medicalId,
+    licenseFront: req.files[1].path,
+    licenseBack: req.files[2].path,
+    specializations: JSON.parse(specializations),
+    qualifications: JSON.parse(qualifications),
+    workplaces: JSON.parse(workplaces),
+    appointments: [],
+    blogs: [],
+  });
   const token = jwt.sign(
     {
       id: createdDoctor.id,
@@ -62,7 +59,6 @@ exports.signup = catchAsync(async (req, res, next) => {
       expiresIn: "6d",
     }
   );
-  await session.commitTransaction();
   const user = _.pick(createdDoctor, ["id", "name", "email"]);
   res.status(201).json({ ...user, token });
 });
@@ -96,146 +92,84 @@ exports.login = catchAsync(async (req, res, next) => {
   res.status(201).json({ ...user, token });
 });
 
-exports.getProfile = async (req, res, next) => {
+exports.getProfile = catchAsync(async (req, res, next) => {
   const doctorId = req.params.id;
-  let doctor;
-  try {
-    doctor = await Doctor.findById(doctorId);
-  } catch (error) {
-    return next(
-      new HttpError("Something went wrong, could not get doctor.", 500)
-    );
-  }
-  if (!doctor) {
-    return next(new HttpError("Could not find doctor.", 404));
-  }
+  const doctor = await Doctor.findById(doctorId);
+  if (!doctor) throw new HttpError("Could not find doctor.", 404);
   res.status(200).json({ doctor: doctor.toObject({ getters: true }) });
-};
+});
 
-exports.editInfo = async (req, res, next) => {
+exports.editInfo = catchAsync(async (req, res, next) => {
   const doctorId = req.params.doctorId;
   const { phoneNo, password, specializations, qualifications, workplaces } =
     req.body;
-
-  let updatedDoctor;
-  try {
-    updatedDoctor = await Doctor.findById(doctorId);
-  } catch (error) {
-    return next(
-      new HttpError("Something went wrong, could not update information.", 500)
+  const updatedDoctor = await Doctor.findById(doctorId);
+  if (!updatedDoctor)
+    throw new HttpError(
+      "Something went wrong, could not update information.",
+      500
     );
-  }
-  if (!updatedDoctor) {
-    return next(
-      new HttpError("Something went wrong, could not update information.", 500)
-    );
-  }
   let isValidPassword = false;
-  try {
-    isValidPassword = await bcrypt.compare(password, updatedDoctor.password);
-  } catch (error) {
-    return next(
-      new HttpError("Something went wrong, could not update information.", 500)
-    );
-  }
-  if (!isValidPassword) {
-    return next(new HttpError("Invalid password, could not update info.", 401));
-  }
+  isValidPassword = await bcrypt.compare(password, updatedDoctor.password);
+  if (!isValidPassword)
+    throw new HttpError("Invalid password, could not update info.", 401);
   updatedDoctor.phoneNo = phoneNo;
   updatedDoctor.specializations = specializations;
   updatedDoctor.qualifications = qualifications;
   updatedDoctor.workplaces = workplaces;
-  try {
-    await updatedDoctor.save();
-  } catch (error) {
-    console.log(error);
-    return next(
-      new HttpError("Something went wrong, could not update information", 500)
-    );
-  }
+  await updatedDoctor.save();
   res.status(200).json({ doctor: updatedDoctor.toObject({ getters: true }) });
-};
+});
 
-exports.changePassword = async (req, res, next) => {
+exports.changePassword = catchAsync(async (req, res, next) => {
   const error = validationResult(req);
+
   if (!error.isEmpty()) {
-    return next(new HttpError("Invalid inputs", 422));
+    throw new HttpError("Invalid inputs", 422);
   }
+
   const doctorId = req.params.doctorId;
   const { oldPassword, newPassword } = req.body;
+  const updatedDoctor = await Doctor.findById(doctorId);
 
-  let updatedDoctor;
-  try {
-    updatedDoctor = await Doctor.findById(doctorId);
-  } catch (error) {
-    return next(
-      new HttpError("Something went wrong, could not update password.", 500)
+  if (!updatedDoctor)
+    throw new HttpError(
+      "Something went wrong, could not update information.",
+      500
     );
-  }
 
-  if (!updatedDoctor) {
-    return next(
-      new HttpError("Something went wrong, could not update information.", 500)
-    );
-  }
   let isValidPassword = false;
-  try {
-    isValidPassword = await bcrypt.compare(oldPassword, updatedDoctor.password);
-  } catch (error) {
-    return next(
-      new HttpError("Something went wrong, could not update password.", 500)
-    );
-  }
+
+  isValidPassword = await bcrypt.compare(oldPassword, updatedDoctor.password);
+
   if (!isValidPassword) {
-    return next(
-      new HttpError("Invalid password, could not update password.", 401)
-    );
+    throw new HttpError("Invalid password, could not update password.", 401);
   }
   if (newPassword === oldPassword) {
-    return next(
-      new HttpError(
-        "Old password and new password are same, could not update password.",
-        401
-      )
+    throw new HttpError(
+      "Old password and new password are same, could not update password.",
+      401
     );
   }
-
-  let hashedPassword;
-  try {
-    hashedPassword = await bcrypt.hash(newPassword, 12);
-  } catch (error) {
-    console.log(error.message);
-    return next(
-      new HttpError("Something went wrong, could not update password.", 500)
-    );
-  }
+  const hashedPassword = await bcrypt.hash(newPassword, 12);
 
   updatedDoctor.password = hashedPassword;
-  try {
-    await updatedDoctor.save();
-  } catch (error) {
-    console.log(error);
-    return next(
-      new HttpError("Something went wrong, could not update password.", 500)
-    );
-  }
-  res.status(200).json({ doctor: updatedDoctor.toObject({ getters: true }) });
-};
 
-exports.getDoctors = async (req, res, next) => {
+  await updatedDoctor.save();
+
+  res.status(200).json({ doctor: updatedDoctor.toObject({ getters: true }) });
+});
+
+exports.getDoctors = catchAsync(async (req, res, next) => {
   const { doctorName, speciality } = req.query;
-  let doctors;
-  try {
-    doctors = await Doctor.find();
-  } catch (error) {
-    return next(
-      new HttpError("Something went wrong, could not get doctors.", 500)
-    );
-  }
+  const doctors = await Doctor.find();
+
   if (!doctors) {
-    return next(new HttpError("Could not find any doctors.", 404));
+    throw new HttpError("Could not find any doctors.", 404);
   }
+
   let filteredDoctors;
+
   if (doctorName && speciality) {
     filteredDoctors = doctors.filter(
       (doctor) =>
@@ -262,33 +196,20 @@ exports.getDoctors = async (req, res, next) => {
       doctor.toObject({ getters: true })
     ),
   });
-};
+});
 
-exports.getDoctor = async (req, res, next) => {
+exports.getDoctor = catchAsync(async (req, res, next) => {
   const doctorId = req.params.doctorId;
-  let doctor;
-  try {
-    doctor = await Doctor.findById(doctorId);
-  } catch (error) {
-    return next(
-      new HttpError("Something went wrong, could not get doctor.", 500)
-    );
-  }
-  if (!doctor) {
-    return next(new HttpError("Could not find doctor.", 404));
-  }
+  const doctor = await Doctor.findById(doctorId);
+  if (!doctor) throw new HttpError("Could not find doctor.", 404);
   res.status(200).json({ doctor: doctor.toObject({ getters: true }) });
-};
+});
 
 exports.getAllAppointments = catchAsync(async (req, res, next) => {
   console.log(req.userData.id);
-
   const appointments = await Appointment.find({
     doctorId: req.userData.id,
   }).populate("patientId");
-
-  console.log(appointments);
-
   res.status(200).json({
     data: {
       appointments: appointments.map((appointment) =>

@@ -1,9 +1,8 @@
+import { Stack, Typography } from "@mui/material";
 import React, { Component } from "react";
-import quizQuestions from "../utils/quizQuestions";
 import Quiz from "../components/smart_detect/Quiz";
 import Result from "../components/smart_detect/Result";
-import logo from "../svg/logo.svg";
-import { Stack, Typography } from "@mui/material";
+import quizQuestions from "../utils/quizQuestions";
 
 class SmartDetect extends Component {
   constructor(props) {

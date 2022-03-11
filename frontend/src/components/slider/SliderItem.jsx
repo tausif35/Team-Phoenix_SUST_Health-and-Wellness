@@ -56,7 +56,9 @@ function SliderItem({ item }) {
         <Image src={item.image} />
       </ImgContainer>
       <InfoContainer>
-        <Typography variant="h4" color="white">{item.title}</Typography>
+        <Typography variant="h4" color="white">
+          {item.title}
+        </Typography>
       </InfoContainer>
     </Container>
   );

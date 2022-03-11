@@ -15,9 +15,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     const existingPatient = await Patient.findOne({ email: email });
     if (existingPatient) throw new HttpError("User already exists, please login", 422);
     const hashedPassword = await bcrypt.hash(password, 12);
-    const session = await mongoose.startSession();
-    session.startTransaction();
-    const createdPatient = await Patient.create([{
+    const createdPatient = await Patient.create({
         name,
         dateOfBirth,
         email,
@@ -27,7 +25,7 @@ exports.signup = catchAsync(async (req, res, next) => {
         profileImage: req.files[0].path,
         appointments: [],
         questions: [],
-    }], { session: session });
+    });
     const token = jwt.sign({
         id: createdPatient.id,
         email: createdPatient.email,
@@ -36,7 +34,6 @@ exports.signup = catchAsync(async (req, res, next) => {
     }, process.env.JWT_KEY, {
         expiresIn: "6d",
     });
-    await session.commitTransaction();
     const user = _.pick(createdPatient, ["id", "name", "email"]);
     res.status(201).json({ ...user, token });
 });

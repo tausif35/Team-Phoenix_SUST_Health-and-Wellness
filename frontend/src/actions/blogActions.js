@@ -62,21 +62,10 @@ export const writeBlog = (blog) => async (dispatch, getState) => {
 
     const res = await axios.post(`${POST_BLOG}`, blog, config);
 
-    // const {
-    //   questionList: { questions },
-    // } = getState();
-
     dispatch({
       type: POST_BLOG_SUCCESS,
       payload: res.data,
     });
-
-    // dispatch({
-    //   type: GET_QUESTIONS_SUCCESS,
-    //   payload: [...questions, res.data.data.newQuestion],
-    // });
-
-    //dispatch(getPersonalQuestions());
   } catch (error) {
     dispatch({
       type: POST_BLOG_FAIL,

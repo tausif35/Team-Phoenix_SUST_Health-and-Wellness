@@ -10,8 +10,6 @@ function BlogCommentField({ blogId }) {
 
   const [comment, setComment] = useState("");
 
-  console.log(blogId);
-
   const { loading, error, success } = useSelector(
     (state) => state.writeBlogComment
   );

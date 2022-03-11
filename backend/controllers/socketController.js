@@ -1,5 +1,7 @@
 const cors = require("cors");
+const mongoose = require("mongoose");
 const { Server } = require("socket.io");
+const Chat = require("../models/chatModel");
 
 const socketInit = (server) => {
   const io = new Server(server, { cors: { origin: "*" } });
@@ -23,7 +25,6 @@ const socketInit = (server) => {
     });
 
     socket.on("join-video-room", (roomId, userName) => {
-      console.log(roomId, userName);
       socket.join(roomId);
       socket.to(roomId).emit("user-connected", userName);
     });
@@ -48,20 +49,53 @@ const socketInit = (server) => {
 
     //Text chat
 
-    socket.on("join-chat-room", (roomId, userName) => {
-      console.log(roomId, userName);
+    socket.on("join-chat-room", async (roomId, userId, onJoin) => {
       socket.join(roomId);
-      socket.to(roomId).emit("user-connected", userName);
+
+      try {
+        const chatData = await Chat.findOne({ chatRoomId: roomId });
+
+        if (!chatData) {
+          const chatRoom = await Chat.create({
+            chatRoomId: roomId,
+            people: [userId],
+            chats: [],
+          });
+
+          onJoin(chatRoom);
+        } else {
+          const user = chatData.people.find((p) => p === userId);
+
+          if (!user) {
+            chatData.people.push(userId);
+            await chatData.save();
+          }
+          onJoin(chatData);
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
     });
 
-    socket.on("chatMsg", (data) => {
-      socket
-        .to(data.roomId)
-        .emit("user-sent-Msg", {
-          text: data.text,
-          sender: data.sender,
-          timeStamp: data.timeStamp,
-        });
+    socket.on("chatMsg", async (data) => {
+      try {
+        const chatRoom = await Chat.findOne({ chatRoomId: data.roomId });
+
+        if (chatRoom) {
+          const message = {
+            senderId: data.senderId,
+            text: data.text,
+            timestamp: data.timestamp,
+          };
+
+          chatRoom.chats.push(message);
+          await chatRoom.save();
+
+          socket.to(data.roomId).emit("user-sent-Msg", message);
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
     });
 
     // Emergency socket creation

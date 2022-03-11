@@ -1,14 +1,14 @@
+import SearchIcon from "@mui/icons-material/Search";
 import {
   Divider,
   IconButton,
   InputBase,
   Paper,
   Stack,
-  Typography,
+  Typography
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import { useState } from "react";
 import axios from "axios";
+import { useState } from "react";
 import { API_HOST } from "../constants/apiLinks";
 
 function MedicinePage() {

@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import {  Delete } from "@mui/icons-material";
+import { Delete } from "@mui/icons-material";
 import {
   Alert,
   Button,

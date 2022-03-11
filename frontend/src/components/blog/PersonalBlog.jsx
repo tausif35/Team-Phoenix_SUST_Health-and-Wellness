@@ -7,7 +7,6 @@ import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 import { CardActionArea, Chip, Divider, Stack } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { getPersonalQuestions } from "../../actions/queAnsActions";
 import { useNavigate } from "react-router-dom";
 import { getPersonalBlogs } from "../../actions/blogActions";
 

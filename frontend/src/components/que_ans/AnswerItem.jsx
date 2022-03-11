@@ -2,8 +2,6 @@ import { ThumbUp } from "@mui/icons-material";
 import { Divider, IconButton, Stack, Typography } from "@mui/material";
 import axios from "axios";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { upVoteAnAnswer } from "../../actions/queAnsActions";
 import { UPVOTE_ANSWER } from "../../constants/apiLinks";
 
 function AnswerItem({ item, userInfo }) {

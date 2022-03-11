@@ -66,8 +66,6 @@ function UserAppointments() {
           config
         );
 
-        console.log(res.data);
-
         setShowDialog(false);
         setValueMissing(false);
       } catch (error) {

@@ -69,8 +69,6 @@ function SetAppointment({ selectedDoctor }) {
           config
         );
 
-        console.log(moment(newValue).valueOf());
-
         setAvailableTimeSlots(res.data.times);
         setAppointmentTime("");
       } catch (error) {
@@ -86,10 +84,6 @@ function SetAppointment({ selectedDoctor }) {
 
   const handleSetAppointment = async () => {
     if (appointmentDate && appointmentTime) {
-      console.log(
-        moment(appointmentDate).format("YYYY-MM-DD") + " " + appointmentTime
-      );
-
       try {
         const res = await axios.post(
           `${POST_APPOINTMENTS}`,
@@ -106,8 +100,6 @@ function SetAppointment({ selectedDoctor }) {
           },
           config
         );
-
-        console.log(res);
 
         handleDialogClose();
       } catch (error) {
